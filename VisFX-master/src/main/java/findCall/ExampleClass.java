@@ -10,6 +10,7 @@ public class ExampleClass {
         squareCalculation(i);
         int a = 8;
         System.out.println("Ridiculous sum result:" + squareCalculation(i) + 5);
+        System.out.println(doSomeMath());
     }
 
     public static int ridiculousFunction(ArrayList<String> list){
@@ -18,5 +19,9 @@ public class ExampleClass {
 
     public static int squareCalculation(int i){
         return i*i;
+    }
+
+    public static int doSomeMath(){
+        return 5 + 3 ;
     }
 }

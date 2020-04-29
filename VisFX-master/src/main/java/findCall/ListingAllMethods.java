@@ -16,23 +16,33 @@ import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ListingAllMethods {
 
-    private static ArrayList<MethodDeclaration> allMethodsInProject = new ArrayList<>();
-    private static ArrayList<MethodCallInformation> allMethodCallsInProject = new ArrayList<>();
+    private ArrayList<MethodDeclaration> allMethodsInProject = new ArrayList<>();
+    private ArrayList<MethodCallInformation> allMethodCallsInProject = new ArrayList<>();
     private static ClassOrInterfaceDeclaration currentClass;
-    private static HashMap<BigInteger, MethodDeclaration> methodMapping = new HashMap<>();
+    private  HashMap<BigInteger, MethodDeclaration> methodMapping = new HashMap<>();
     private static ArrayList<VariableDeclarator> currentClassDeclarations = new ArrayList<>();
     private static ArrayList<String> deleteMeLater = new ArrayList<>();
     private static ArrayList<String> deleteMeAlso = new ArrayList<>();
 
 
     public static void main(String[] args) throws Exception {
+        ListingAllMethods exClass = new ListingAllMethods();
+        exClass.findMethodCalls();
+    }
 
+    public void findMethodCalls() throws Exception{
         //directoryPath is the project path!
-        String directoryPath = "C:\\Users\\gldng\\IdeaProjects\\JavaParserTesting";
-        ArrayList<File> classFilesInDirectory = fileFinder(directoryPath);
+        String directoryPath = "C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java\\findCall\\ExampleClass";
+        //ArrayList<File> classFilesInDirectory = fileFinder(directoryPath);
+
+        //Temporary lines
+        ArrayList<File> classFilesInDirectory = new ArrayList<>();
+        classFilesInDirectory.add(new File("C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java\\findCall\\ExampleClass.java"));
+
         VoidVisitor<?> methodFinder = new MethodFinder();
         MethodCallFinder methodCallFinder = new MethodCallFinder();
         VariableDeclarationFinder declarationFinder = new VariableDeclarationFinder();
@@ -51,7 +61,7 @@ public class ListingAllMethods {
         }
     }
 
-    public static ArrayList<File> fileFinder(String filePath){
+    public ArrayList<File> fileFinder(String filePath){
 
         ArrayList<File> classFilesInDirectory = new ArrayList<>();
         File directory = new File(filePath);
@@ -67,7 +77,7 @@ public class ListingAllMethods {
         return classFilesInDirectory;
     }
 
-    private static class MethodCallFinder extends VoidVisitorAdapter<Void> {
+    private class MethodCallFinder extends VoidVisitorAdapter<Void> {
 
         @Override
         public void visit(MethodCallExpr methodCallExpr, Void arg) {
@@ -86,14 +96,14 @@ public class ListingAllMethods {
         }
     }
 
-    private static String findParameterOfMethodCall(MethodCallExpr methodCallExpr){
+    private String findParameterOfMethodCall(MethodCallExpr methodCallExpr){
         if (methodCallExpr.getArguments().isEmpty())
             return "None";
         else
             return "Blabla";
     }
 
-    private static String findClassOfMethodCall(MethodCallExpr methodCall){
+    private String findClassOfMethodCall(MethodCallExpr methodCall){
         if(methodCall.getScope().isPresent()){
             Node tempNode = methodCall.getScope().get();
             while (!tempNode.getChildNodes().isEmpty()){
@@ -112,7 +122,7 @@ public class ListingAllMethods {
             return currentClass.getName() + "-";
     }
 
-    private static class VariableDeclarationFinder extends VoidVisitorAdapter<Void>{
+    private class VariableDeclarationFinder extends VoidVisitorAdapter<Void>{
 
         @Override
         public void visit(VariableDeclarator variableDeclarator, Void arg) {
@@ -122,7 +132,7 @@ public class ListingAllMethods {
         }
     }
 
-    private static class MethodFinder extends VoidVisitorAdapter<Void> {
+    private class MethodFinder extends VoidVisitorAdapter<Void> {
 
         @Override
         public void visit(MethodDeclaration methodDeclaration, Void arg) {
@@ -138,7 +148,7 @@ public class ListingAllMethods {
         }
     }
 
-    private static String getMethodParameterTypesAsString(MethodDeclaration method){
+    private String getMethodParameterTypesAsString(MethodDeclaration method){
         NodeList<Parameter> methodParameters = method.getParameters();
         if(methodParameters.size() == 0)
             return "None";
@@ -152,5 +162,12 @@ public class ListingAllMethods {
         return parameterTypes.toString().substring(0, parameterTypes.length()-1);
     }
 
+    public ArrayList<MethodCallInformation> getAllMethodCallsInProject() {
+        return allMethodCallsInProject;
+    }
+
+    public ArrayList<MethodDeclaration> getAllMethodsInProject() {
+        return allMethodsInProject;
+    }
 
 }
