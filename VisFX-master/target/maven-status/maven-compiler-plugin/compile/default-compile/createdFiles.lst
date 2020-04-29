@@ -1,0 +1,9 @@
+gui\GraphView.class
+examples\TwoNodeGraph.class
+api\VisFx.class
+gui\Browser.class
+examples\ComplexGraph.class
+graph\VisEdge.class
+jsonutils\VisEdgeAdapter.class
+graph\VisGraph.class
+graph\VisNode.class
