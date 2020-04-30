@@ -8,7 +8,7 @@ public class MethodCallInformation {
     private ClassOrInterfaceDeclaration classInfo;
     private MethodCallExpr methodCall;
     private int methodCallLineNumber;
-    private MethodDeclaration actualMethod;
+    private MethodDeclaration actualMethodCalled;
 
     public MethodCallInformation(
             ClassOrInterfaceDeclaration classInfo, MethodCallExpr methodCall, int methodCallLineNumber){
@@ -22,14 +22,8 @@ public class MethodCallInformation {
         this.methodCall = methodCall;
         this.classInfo = classInfo;
         this.methodCallLineNumber = methodCallLineNumber;
-        this.actualMethod = actualMethod;
+        this.actualMethodCalled = actualMethod;
     }
-
-    public void exampleMethod(){
-        this.getMethodCall();
-        this.getClassInfo();
-    }
-
 
     public MethodCallExpr getMethodCall() {
         return methodCall;
@@ -41,5 +35,9 @@ public class MethodCallInformation {
 
     public int getMethodCallLineNumber() {
         return methodCallLineNumber;
+    }
+
+    public MethodDeclaration getActualMethodCalled() {
+        return actualMethodCalled;
     }
 }
