@@ -11,7 +11,7 @@
             width: 100%;
             height: 100vh;
             border: 2px solid #000000;
-            background: #7aa5cb;
+            background: rgba(185, 180, 255, 0.66);
         }
     </style>
 </head>
@@ -35,6 +35,23 @@
         nodes:{
             color:{
                 background:"#b9b4ff"
+            },
+            margin:20
+        },
+        physics:true,
+        configure:function (option, path) {
+            if (path.indexOf('smooth') !== -1 || option === 'smooth') {
+                return true;
+            }
+            return false;
+        },
+        hierarchicalRepulsion: {
+            avoidOverlap: 1
+        },
+        edges: {
+            smooth: {
+                type: 'continuous',
+                "roundness": 0
             }
         }
     };
@@ -45,7 +62,7 @@
         nodes = new vis.DataSet(nodesArray);
         edges = new vis.DataSet(edgesArray);
         network.setData({nodes:nodes, edges:edges});
-        network.setOptions({nodes:{shape:'square'}});
+        network.setOptions({nodes:{shape:'box'}});
         //network.setOptions({nodes:{shadow:true},edges:{shadow:true}});
         network.setOptions({layout:{hierarchical:{sortMethod:'directed'}}});
     }

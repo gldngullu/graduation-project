@@ -37,8 +37,8 @@ public class ExGraphOfMethods extends Application {
                 nodeLabel = ((MethodDeclaration) caller).getNameAsString();
             else if(caller instanceof ClassOrInterfaceDeclaration)
                 nodeLabel = ((ClassOrInterfaceDeclaration) caller).getNameAsString();
-            VisNode to = new VisNode(2 * i, nodeLabel);
-            VisNode from = new VisNode( (2 * i + 1) , tempMethod.getMethodCall().getName().asString());
+            VisNode from = new VisNode(2 * i, nodeLabel);
+            VisNode to = new VisNode( (2 * i + 1) , tempMethod.getMethodCall().getName().asString());
             VisEdge edge = new VisEdge(from, to, "to", "");
             graph.addNodes(from,to);
             graph.addEdges(edge);
