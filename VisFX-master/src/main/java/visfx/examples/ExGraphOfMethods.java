@@ -14,9 +14,14 @@ import visfx.graph.VisEdge;
 import visfx.graph.VisGraph;
 import visfx.graph.VisNode;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ExGraphOfMethods extends Application {
+    private HashMap<BigInteger, VisNode> nodesOfGraph = new HashMap<>();
+    private HashMap<BigInteger, VisEdge> edgesOfGraph = new HashMap<>();
+    private int nodeCount = 0;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -32,19 +37,49 @@ public class ExGraphOfMethods extends Application {
         for (int i = 0; i < methodCalls.size(); i++) {
             MethodCallInformation tempMethod = methodCalls.get(i);
             Node caller = getCallerOfMethodCall(tempMethod);
-            String nodeLabel = "";
+            String sourceNodeLabel = "";
             if(caller instanceof MethodDeclaration)
-                nodeLabel = ((MethodDeclaration) caller).getNameAsString();
+                //Class olarak simple name bastırmak için parenttan araştırman lazım!
+                sourceNodeLabel =  caller.getClass().getName() + "\n" + ((MethodDeclaration) caller).getNameAsString();
             else if(caller instanceof ClassOrInterfaceDeclaration)
-                nodeLabel = ((ClassOrInterfaceDeclaration) caller).getNameAsString();
-            VisNode from = new VisNode(2 * i, nodeLabel);
-            VisNode to = new VisNode( (2 * i + 1) , tempMethod.getMethodCall().getName().asString());
-            VisEdge edge = new VisEdge(from, to, "to", "");
-            graph.addNodes(from,to);
-            graph.addEdges(edge);
+                sourceNodeLabel = ((ClassOrInterfaceDeclaration) caller).getNameAsString();
+
+            String targetNodeLabel;
+            if(tempMethod.getActualMethodCalled() != null){
+                targetNodeLabel = tempMethod.getActualMethodCalled().getClass().getName() + "\n" + tempMethod.getMethodCall().getName().asString();
+            } else {
+                targetNodeLabel = tempMethod.getMethodCall().getName().asString();
+            }
+
+            BigInteger sourceNodeKey = addNewNode(sourceNodeLabel);
+            BigInteger targetNodeKey = addNewNode(targetNodeLabel + "()");
+
+            String edgeKeyString = sourceNodeLabel + " to " + targetNodeLabel;
+            BigInteger edgeKey = addNewEdge(edgeKeyString, sourceNodeKey, targetNodeKey);
+
+            graph.addNodes(nodesOfGraph.get(sourceNodeKey), nodesOfGraph.get(targetNodeKey));
+            graph.addEdges(edgesOfGraph.get(edgeKey));
         }
 
         return graph;
+    }
+
+    private BigInteger addNewNode(String nodeLabel){
+        BigInteger tempKey = new BigInteger(nodeLabel.getBytes());
+        if(!nodesOfGraph.containsKey(tempKey)) {
+            VisNode node = new VisNode(nodeCount++, nodeLabel);
+            nodesOfGraph.put(tempKey, node);
+        }
+        return tempKey;
+    }
+
+    private BigInteger addNewEdge(String keyString, BigInteger sourceKey, BigInteger targetKey){
+        BigInteger tempKey = new BigInteger(keyString.getBytes());
+        if(!edgesOfGraph.containsKey(tempKey)) {
+            VisEdge edge = new VisEdge(nodesOfGraph.get(sourceKey), nodesOfGraph.get(targetKey), "to", "");
+            edgesOfGraph.put(tempKey, edge);
+        }
+        return tempKey;
     }
 
     private Node getCallerOfMethodCall(MethodCallInformation methodCall){

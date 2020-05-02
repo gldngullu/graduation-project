@@ -46,12 +46,18 @@
             return false;
         },
         hierarchicalRepulsion: {
-            avoidOverlap: 1
+            nodeDistance: 500
         },
         edges: {
             smooth: {
                 type: 'continuous',
                 "roundness": 0
+            }
+        },
+        layout: {
+            hierarchical: {
+                sortMethod:'directed',
+                nodeSpacing:500
             }
         }
     };
@@ -64,7 +70,7 @@
         network.setData({nodes:nodes, edges:edges});
         network.setOptions({nodes:{shape:'box'}});
         //network.setOptions({nodes:{shadow:true},edges:{shadow:true}});
-        network.setOptions({layout:{hierarchical:{sortMethod:'directed'}}});
+        network.setOptions({});
     }
 </script>
 

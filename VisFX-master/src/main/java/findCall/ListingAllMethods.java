@@ -12,6 +12,7 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
+import javax.lang.model.type.ArrayType;
 import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -155,7 +156,7 @@ public class ListingAllMethods {
         StringBuilder parameterTypes = new StringBuilder();
         for (Parameter parameter: method.getParameters()){
             parameterTypes.append(parameter.getType().getElementType().toString());
-            if(parameter.getType().getMetaModel().getTypeName().equals("ArrayType"))
+            if(parameter instanceof ArrayType)
                 parameterTypes.append("[]");
             parameterTypes.append("-");
         }
