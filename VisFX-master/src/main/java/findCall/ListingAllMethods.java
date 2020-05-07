@@ -37,12 +37,13 @@ public class ListingAllMethods {
 
     public void findMethodCalls() throws Exception{
         //directoryPath is the project path!
-        String directoryPath = "C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java\\findCall\\ExampleClass";
-        //ArrayList<File> classFilesInDirectory = fileFinder(directoryPath);
+        String directoryPath = "C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java\\example_classes";
+        ArrayList<File> classFilesInDirectory = fileFinder(directoryPath);
 
-        //Temporary lines
+        /*Temporary lines
         ArrayList<File> classFilesInDirectory = new ArrayList<>();
-        classFilesInDirectory.add(new File("C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java\\findCall\\ExampleClass.java"));
+        classFilesInDirectory.add(new File("C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java\\example_classes"));
+         */
 
         VoidVisitor<?> methodFinder = new MethodFinder();
         MethodCallFinder methodCallFinder = new MethodCallFinder();

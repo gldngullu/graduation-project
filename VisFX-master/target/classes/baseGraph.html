@@ -38,15 +38,14 @@
             },
             margin:20
         },
-        physics:true,
-        configure:function (option, path) {
-            if (path.indexOf('smooth') !== -1 || option === 'smooth') {
-                return true;
+        physics: {
+            hierarchicalRepulsion: {
+                avoidOverlap:1
+                //springConstant:0.03
             }
-            return false;
         },
-        hierarchicalRepulsion: {
-            nodeDistance: 500
+        configure:function (option, path) {
+            return path.indexOf('smooth') !== -1 || option === 'smooth';
         },
         edges: {
             smooth: {
@@ -57,7 +56,7 @@
         layout: {
             hierarchical: {
                 sortMethod:'directed',
-                nodeSpacing:500
+                parentCentralization: true
             }
         }
     };

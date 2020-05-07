@@ -3,11 +3,13 @@ package visfx.examples;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import findCall.ListingAllMethods;
 import findCall.MethodCallInformation;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javassist.compiler.ast.MethodDecl;
+import javassist.compiler.ast.Visitor;
 import javassist.expr.MethodCall;
 import visfx.api.VisFx;
 import visfx.graph.VisEdge;
@@ -39,14 +41,13 @@ public class ExGraphOfMethods extends Application {
             Node caller = getCallerOfMethodCall(tempMethod);
             String sourceNodeLabel = "";
             if(caller instanceof MethodDeclaration)
-                //Class olarak simple name bastırmak için parenttan araştırman lazım!
-                sourceNodeLabel =  caller.getClass().getName() + "\n" + ((MethodDeclaration) caller).getNameAsString();
+                sourceNodeLabel =  getClass(caller).getNameAsString() + "\n" + ((MethodDeclaration) caller).getNameAsString();
             else if(caller instanceof ClassOrInterfaceDeclaration)
                 sourceNodeLabel = ((ClassOrInterfaceDeclaration) caller).getNameAsString();
 
             String targetNodeLabel;
             if(tempMethod.getActualMethodCalled() != null){
-                targetNodeLabel = tempMethod.getActualMethodCalled().getClass().getName() + "\n" + tempMethod.getMethodCall().getName().asString();
+                targetNodeLabel = getClass(tempMethod.getActualMethodCalled()).getNameAsString() + "\n" + tempMethod.getMethodCall().getName().asString();
             } else {
                 targetNodeLabel = tempMethod.getMethodCall().getName().asString();
             }
@@ -71,6 +72,14 @@ public class ExGraphOfMethods extends Application {
             nodesOfGraph.put(tempKey, node);
         }
         return tempKey;
+    }
+
+    private ClassOrInterfaceDeclaration getClass(Node node){
+        Node classOfNode =  node.getParentNode().get();
+        while(!(classOfNode instanceof ClassOrInterfaceDeclaration)){
+            classOfNode = classOfNode.getParentNode().get();
+        }
+        return (ClassOrInterfaceDeclaration)classOfNode;
     }
 
     private BigInteger addNewEdge(String keyString, BigInteger sourceKey, BigInteger targetKey){
