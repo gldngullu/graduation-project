@@ -7,8 +7,12 @@ public class ExampleClass {
     private static int i = Math.abs(25);
 
     public static void main(String[] args) {
+        ChildExampleClass childExampleClass = new ChildExampleClass();
+        childExampleClass.toString();
         squareCalculation(i);
         int a = 8;
+        ArrayList<String> list = new ArrayList();
+        ridiculousFunction(list);
         System.out.println("Ridiculous sum result:" + squareCalculation(i) + 5);
         System.out.println(doSomeMath());
         System.out.println(doSomeMath(a));

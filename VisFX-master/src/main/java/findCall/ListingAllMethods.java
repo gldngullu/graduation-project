@@ -9,34 +9,41 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import com.github.javaparser.symbolsolver.JavaSymbolSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 
 import javax.lang.model.type.ArrayType;
 import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Locale;
 
 public class ListingAllMethods {
+
+    private static final String PACKAGE_PATH = "C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java";
 
     private ArrayList<MethodDeclaration> allMethodsInProject = new ArrayList<>();
     private ArrayList<MethodCallInformation> allMethodCallsInProject = new ArrayList<>();
     private static ClassOrInterfaceDeclaration currentClass;
     private  HashMap<BigInteger, MethodDeclaration> methodMapping = new HashMap<>();
     private static ArrayList<VariableDeclarator> currentClassDeclarations = new ArrayList<>();
-    private static ArrayList<String> deleteMeLater = new ArrayList<>();
-    private static ArrayList<String> deleteMeAlso = new ArrayList<>();
+    private static ArrayList<String> deleteMeMethods = new ArrayList<>();
+    private static ArrayList<String> deleteMeMethodCalls = new ArrayList<>();
 
 
     public static void main(String[] args) throws Exception {
+        Locale.setDefault(Locale.forLanguageTag("en"));
         ListingAllMethods exClass = new ListingAllMethods();
         exClass.findMethodCalls();
     }
 
     public void findMethodCalls() throws Exception{
-        //directoryPath is the project path!
         String directoryPath = "C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java\\example_classes";
         ArrayList<File> classFilesInDirectory = fileFinder(directoryPath);
 
@@ -49,6 +56,13 @@ public class ListingAllMethods {
         MethodCallFinder methodCallFinder = new MethodCallFinder();
         VariableDeclarationFinder declarationFinder = new VariableDeclarationFinder();
 
+        CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
+        combinedTypeSolver.add(new ReflectionTypeSolver());
+        combinedTypeSolver.add(new JavaParserTypeSolver(PACKAGE_PATH));
+
+        JavaSymbolSolver symbolSolver = new JavaSymbolSolver(combinedTypeSolver);
+        StaticJavaParser.getConfiguration().setSymbolResolver(symbolSolver);
+
         for (File classFile: classFilesInDirectory) {
             CompilationUnit compilationUnit = StaticJavaParser.parse(classFile);
             for (Node node : compilationUnit.getChildNodes()) {
@@ -59,6 +73,9 @@ public class ListingAllMethods {
             }
             declarationFinder.visit(currentClass, null);
             methodFinder.visit(compilationUnit, null);
+        }
+        for (File classFile: classFilesInDirectory) {
+            CompilationUnit compilationUnit = StaticJavaParser.parse(classFile);
             methodCallFinder.visit(compilationUnit, null);
         }
     }
@@ -84,17 +101,22 @@ public class ListingAllMethods {
         @Override
         public void visit(MethodCallExpr methodCallExpr, Void arg) {
             super.visit(methodCallExpr, arg);
+            /*
             String keyString = methodCallExpr.getNameAsString() + "-" +
                                 findClassOfMethodCall(methodCallExpr) +
                                 findParameterOfMethodCall(methodCallExpr);
+                                class bulma methodundan tireyi sildin eklemeyi unutma
+             */
+            String keyString = methodCallExpr.resolve().getQualifiedSignature();
+            deleteMeMethodCalls.add(keyString);
             BigInteger tempKey = new BigInteger(keyString.getBytes());
-            deleteMeAlso.add(keyString);
+
             if(methodMapping.get(tempKey) != null)
                 allMethodCallsInProject.add(
-                        new MethodCallInformation(currentClass, methodCallExpr, methodCallExpr.getRange().get().begin.line, methodMapping.get(tempKey)));
+                        new MethodCallInformation(methodCallExpr, methodCallExpr.getRange().get().begin.line, methodMapping.get(tempKey)));
             else
                 allMethodCallsInProject.add(
-                        new MethodCallInformation(currentClass, methodCallExpr, methodCallExpr.getRange().get().begin.line));
+                        new MethodCallInformation(methodCallExpr, methodCallExpr.getRange().get().begin.line));
         }
     }
 
@@ -105,6 +127,7 @@ public class ListingAllMethods {
             return "Blabla";
     }
 
+    //Bu bilgiyi tutmaya gerek var mı?
     private String findClassOfMethodCall(MethodCallExpr methodCall){
         if(methodCall.getScope().isPresent()){
             Node tempNode = methodCall.getScope().get();
@@ -113,15 +136,15 @@ public class ListingAllMethods {
             }
             String scope = tempNode.toString();
             if(scope.equals("this"))
-                return currentClass.getName() + "-";
+                return currentClass.getNameAsString();
             for (int i = 0; i < currentClassDeclarations.size(); i++) {
-                if(currentClassDeclarations.get(i).getTypeAsString().equals(scope)){
-                    return scope + "-";
+                if(currentClassDeclarations.get(i).getNameAsString().equals(scope)){
+                    return ((ClassOrInterfaceType)currentClassDeclarations.get(i).getType()).getNameAsString();
                 }
             }
-            return "Java-";
+            return "Java";
         } else
-            return currentClass.getName() + "-";
+            return currentClass.getNameAsString();
     }
 
     private class VariableDeclarationFinder extends VoidVisitorAdapter<Void>{
@@ -129,7 +152,7 @@ public class ListingAllMethods {
         @Override
         public void visit(VariableDeclarator variableDeclarator, Void arg) {
             super.visit(variableDeclarator, arg);
-            if (variableDeclarator.getType().getMetaModel().getTypeName().equals("ClassOrInterfaceDeclaration"))
+            if (variableDeclarator.getType().getMetaModel().getTypeName().equals("ClassOrInterfaceType"))
                 currentClassDeclarations.add(variableDeclarator);
         }
     }
@@ -140,11 +163,14 @@ public class ListingAllMethods {
         public void visit(MethodDeclaration methodDeclaration, Void arg) {
             super.visit(methodDeclaration, arg);
             allMethodsInProject.add(methodDeclaration);
+            /*
             String keyString =
                     methodDeclaration.getNameAsString() + "-" +
                             ((ClassOrInterfaceDeclaration)methodDeclaration.getParentNode().get()).getName() + "-" +
                             getMethodParameterTypesAsString(methodDeclaration);
-            deleteMeLater.add(keyString);
+             */
+            String keyString = methodDeclaration.resolve().getQualifiedSignature();
+            deleteMeMethods.add(keyString);
             BigInteger tempKey = new BigInteger(keyString.getBytes());
             methodMapping.put(tempKey, methodDeclaration);
         }

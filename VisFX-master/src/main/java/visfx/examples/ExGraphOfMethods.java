@@ -19,6 +19,7 @@ import visfx.graph.VisNode;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class ExGraphOfMethods extends Application {
     private HashMap<BigInteger, VisNode> nodesOfGraph = new HashMap<>();
@@ -27,6 +28,7 @@ public class ExGraphOfMethods extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        Locale.setDefault(Locale.forLanguageTag("en"));
         VisFx.graphNetwork(getDummyGraph(),primaryStage);
     }
 
@@ -52,7 +54,7 @@ public class ExGraphOfMethods extends Application {
                 targetNodeLabel = tempMethod.getMethodCall().getName().asString();
             }
 
-            BigInteger sourceNodeKey = addNewNode(sourceNodeLabel);
+            BigInteger sourceNodeKey = addNewNode(sourceNodeLabel + "()");
             BigInteger targetNodeKey = addNewNode(targetNodeLabel + "()");
 
             String edgeKeyString = sourceNodeLabel + " to " + targetNodeLabel;

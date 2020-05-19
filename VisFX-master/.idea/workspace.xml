@@ -2,20 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="53539737-bb83-4c2b-9218-4c2976425655" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/example_classes/ChildExampleClass.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/findCall/ResolveMethodCalls.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/findCall/ExampleClass.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/example_classes/ExampleClass.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/example_classes/ExampleClass.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/example_classes/ExampleClass.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/findCall/ListingAllMethods.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/findCall/ListingAllMethods.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/findCall/MethodCallInformation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/findCall/MethodCallInformation.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/visfx/examples/ExGraphOfMethods.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/visfx/examples/ExGraphOfMethods.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/baseGraph.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/baseGraph.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/baseGraph.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/baseGraph.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/findCall/ExampleClass.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/example_classes/ExampleClass.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/example_classes/ExampleClass.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/findCall/ListingAllMethods$MethodCallFinder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/findCall/ListingAllMethods$MethodCallFinder.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/findCall/ListingAllMethods$MethodFinder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/findCall/ListingAllMethods$MethodFinder.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/findCall/ListingAllMethods$VariableDeclarationFinder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/findCall/ListingAllMethods$VariableDeclarationFinder.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/findCall/ListingAllMethods.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/findCall/ListingAllMethods.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/visfx/examples/ExGraphOfMethods.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/visfx/examples/ExGraphOfMethods.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/findCall/MethodCallInformation.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/findCall/MethodCallInformation.class" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/classes/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -28,50 +26,55 @@
   <component name="DefaultGradleProjectSettings">
     <option name="isMigrated" value="true" />
   </component>
+  <component name="FavoritesManager">
+    <favorites_list name="visfx" />
+  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/findCall/ListingAllMethods.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="220">
-              <caret line="40" column="41" selection-start-line="40" selection-start-column="41" selection-end-line="40" selection-end-column="41" />
+            <state relative-caret-position="460">
+              <caret line="47" column="44" selection-start-line="47" selection-start-column="44" selection-end-line="47" selection-end-column="44" />
               <folding>
-                <element signature="e#7335#7336#0" expanded="true" />
-                <element signature="e#7381#7382#0" expanded="true" />
-                <element signature="e#7449#7450#0" expanded="true" />
-                <element signature="e#7491#7492#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/findCall/MethodCallInformation.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="520">
+              <caret line="30" lean-forward="true" selection-start-line="30" selection-end-line="30" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#1000#1001#0" expanded="true" />
+                <element signature="e#1041#1042#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/example_classes/ChildExampleClass.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="160">
-              <caret line="8" column="24" selection-start-line="8" selection-start-column="24" selection-end-line="8" selection-end-column="24" />
-              <folding>
-                <element signature="e#124#125#0" expanded="true" />
-                <element signature="e#171#172#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/visfx/examples/ExGraphOfMethods.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="220">
-              <caret line="32" column="54" selection-start-line="32" selection-start-column="54" selection-end-line="32" selection-end-column="54" />
+            <state relative-caret-position="461">
+              <caret line="56" column="36" selection-start-line="56" selection-start-column="23" selection-end-line="56" selection-end-column="36" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/visfx/examples/TwoNodeGraph.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/example_classes/ChildExampleClass.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="400">
-              <caret line="25" column="5" selection-start-line="25" selection-start-column="5" selection-end-line="25" selection-end-column="5" />
+            <state relative-caret-position="120">
+              <caret line="6" column="27" selection-start-line="6" selection-start-column="27" selection-end-line="6" selection-end-column="27" />
+              <folding>
+                <element signature="e#354#355#0" expanded="true" />
+                <element signature="e#422#423#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -79,48 +82,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/example_classes/ExampleClass.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="20" column="25" lean-forward="true" selection-start-line="20" selection-start-column="25" selection-end-line="20" selection-end-column="25" />
-              <folding>
-                <element signature="e#611#612#0" expanded="true" />
-                <element signature="e#676#677#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="455">
+              <caret line="32" selection-start-line="32" selection-end-line="32" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/visfx/gui/GraphView.java">
+        <entry file="jar://$MAVEN_REPOSITORY$/com/github/javaparser/javaparser-symbol-solver-core/3.15.14/javaparser-symbol-solver-core-3.15.14-sources.jar!/com/github/javaparser/symbolsolver/javaparsermodel/JavaParserFacade.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="20">
-              <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/baseGraph.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="480">
-              <caret line="54" column="10" selection-start-line="54" selection-start-column="10" selection-end-line="54" selection-end-column="10" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/graphLibraries/vis.min.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="460">
-              <caret line="23" column="3" selection-start-line="23" selection-start-column="3" selection-end-line="23" selection-end-column="3" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/visfx/graph/VisNode.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="380">
-              <caret line="21" selection-start-line="21" selection-end-line="21" />
+            <state relative-caret-position="9660">
+              <caret line="543" selection-start-line="543" selection-end-line="543" />
             </state>
           </provider>
         </entry>
@@ -139,6 +111,9 @@
       <find>from</find>
       <find>to</find>
       <find>getClass</find>
+      <find>deleteMe</find>
+      <find>keyS</find>
+      <find>()</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -152,12 +127,13 @@
         <option value="$PROJECT_DIR$/src/main/java/gui/GraphView.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/findCall/ExampleClass.java" />
-        <option value="$PROJECT_DIR$/src/main/java/findCall/MethodCallInformation.java" />
-        <option value="$PROJECT_DIR$/src/main/java/visfx/examples/ExGraphOfMethods.java" />
         <option value="$PROJECT_DIR$/src/main/resources/baseGraph.html" />
-        <option value="$PROJECT_DIR$/src/main/java/findCall/ListingAllMethods.java" />
         <option value="$PROJECT_DIR$/src/main/java/example_classes/ChildExampleClass.java" />
+        <option value="$PROJECT_DIR$/src/main/java/findCall/ResolveMethodCalls.java" />
+        <option value="$PROJECT_DIR$/src/main/java/findCall/MethodCallInformation.java" />
+        <option value="$PROJECT_DIR$/src/main/java/findCall/ListingAllMethods.java" />
         <option value="$PROJECT_DIR$/src/main/java/example_classes/ExampleClass.java" />
+        <option value="$PROJECT_DIR$/src/main/java/visfx/examples/ExGraphOfMethods.java" />
       </list>
     </option>
   </component>
@@ -180,7 +156,7 @@
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
-    <option name="width" value="1936" />
+    <option name="width" value="976" />
     <option name="height" value="1056" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -191,6 +167,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
@@ -240,15 +217,6 @@
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="visfx" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="visfx" type="b2602c69:ProjectViewProjectNode" />
-              <item name="VisFX-master" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="visfx" type="462c0819:PsiDirectoryNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="visfx" type="b2602c69:ProjectViewProjectNode" />
@@ -310,7 +278,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -327,6 +294,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="findCall" />
       <recent name="visfx.examples" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
@@ -398,23 +366,33 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="baseGraph.html (1)" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/visfx/Graph_Gen/baseGraph.html" useBuiltInWebServerPort="true">
-      <method v="2" />
+    <configuration name="ResolveMethodCalls" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="findCall.ResolveMethodCalls" />
+      <module name="Graph_Gen" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="findCall.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
     </configuration>
     <list>
-      <item itemvalue="Application.ComplexGraph" />
       <item itemvalue="Application.ListingAllMethods" />
       <item itemvalue="Application.ExGraphOfMethods" />
       <item itemvalue="Application.ChildExampleClass" />
-      <item itemvalue="JavaScript Debug.baseGraph.html (1)" />
+      <item itemvalue="Application.ResolveMethodCalls" />
+      <item itemvalue="Application.ComplexGraph" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Application.ExGraphOfMethods" />
-        <item itemvalue="Application.ListingAllMethods" />
-        <item itemvalue="Application.ChildExampleClass" />
-        <item itemvalue="JavaScript Debug.baseGraph.html (1)" />
         <item itemvalue="Application.ComplexGraph" />
+        <item itemvalue="Application.ListingAllMethods" />
+        <item itemvalue="Application.ResolveMethodCalls" />
+        <item itemvalue="Application.ChildExampleClass" />
       </list>
     </recent_temporary>
   </component>
@@ -437,6 +415,16 @@
       <workItem from="1588332648187" duration="1288000" />
       <workItem from="1588413676724" duration="10626000" />
       <workItem from="1588504033432" duration="7140000" />
+      <workItem from="1588850576087" duration="1930000" />
+      <workItem from="1589100283498" duration="265000" />
+      <workItem from="1589531068068" duration="379000" />
+      <workItem from="1589531483416" duration="1304000" />
+      <workItem from="1589532821499" duration="594000" />
+      <workItem from="1589534197949" duration="2960000" />
+      <workItem from="1589729657053" duration="4635000" />
+      <workItem from="1589835661697" duration="6735000" />
+      <workItem from="1589890442819" duration="7779000" />
+      <workItem from="1589922909146" duration="4395000" />
     </task>
     <servers />
   </component>
@@ -455,7 +443,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="57397000" />
+    <option name="totallyTimeSpent" value="88373000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -467,28 +455,29 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15884861" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49874055" visible="true" weight="0.13166311" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
       <window_info id="UI Designer" order="4" />
       <window_info id="Capture Tool" order="5" />
-      <window_info id="Favorites" order="6" side_tool="true" />
+      <window_info id="Favorites" order="6" sideWeight="0.50125945" side_tool="true" weight="0.23703042" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.31744313" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.24593717" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.21018419" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.12892741" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32936078" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.32936078" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
-      <window_info anchor="bottom" id="Terminal" order="10" weight="0.20476706" />
+      <window_info anchor="bottom" id="Terminal" order="10" weight="0.4637053" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
-      <window_info anchor="bottom" id="Messages" order="12" weight="0.32936078" />
+      <window_info anchor="bottom" id="Messages" order="12" weight="0.32932165" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -507,16 +496,16 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/findCall/ListingAllMethods.java</url>
-          <line>35</line>
+          <url>file://$PROJECT_DIR$/src/main/java/findCall/ResolveMethodCalls.java</url>
+          <line>36</line>
           <properties />
-          <option name="timeStamp" value="5" />
+          <option name="timeStamp" value="10" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/visfx/examples/ExGraphOfMethods.java</url>
-          <line>49</line>
+          <url>file://$PROJECT_DIR$/src/main/java/findCall/ListingAllMethods.java</url>
+          <line>43</line>
           <properties />
-          <option name="timeStamp" value="7" />
+          <option name="timeStamp" value="24" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -524,47 +513,47 @@
   <component name="debuggerHistoryManager">
     <expressions id="evaluateExpression">
       <expression>
-        <expression-string>tempMethod.getMethodCall()</expression-string>
+        <expression-string>ListingAllMethods.deleteMeMethods</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>tempMethod.getMethodCall().getParentNode().get()</expression-string>
+        <expression-string>exClass.allMethodsInProject</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>tempMethod.getMethodCall().getClass()</expression-string>
+        <expression-string>ListingAllMethods.deleteMeLater</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>tempMethod.getActualMethodCalled().getParentNode().get().getName()</expression-string>
+        <expression-string>methodCallExpr.resolve().getQualifiedName()</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>tempMethod.getActualMethodCalled().getParentNode().get().getName</expression-string>
+        <expression-string>methodCallExpr.resolve().getQualifiedSignature()</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>tempMethod.getActualMethodCalled().getParentNode().get()</expression-string>
+        <expression-string>methodCallExpr.resolve().getPackageName()</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>tempMethod.getActualMethodCalled().getParentNode().get().toString()</expression-string>
+        <expression-string>methodCallExpr.resolve().getName()</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>tempMethod.getActualMethodCalled().getParentNode()</expression-string>
+        <expression-string>methodCallExpr.resolve().getNumberOfParams()</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>tempMethod.getActualMethodCalled().getClass()</expression-string>
+        <expression-string>methodCallExpr.resolve().getClass()</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
@@ -729,85 +718,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/github/javaparser/javaparser-core/3.15.14/javaparser-core-3.15.14-sources.jar!/com/github/javaparser/ast/body/MethodDeclaration.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="166">
-          <caret line="57" column="13" selection-start-line="57" selection-start-column="13" selection-end-line="57" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/graphLibraries/vis-network.min.js">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/findCall/MethodCallInformation.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="10" column="39" selection-start-line="10" selection-start-column="39" selection-end-line="10" selection-end-column="39" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/visfx/graph/VisNode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="380">
-          <caret line="21" selection-start-line="21" selection-end-line="21" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/visfx/graph/VisEdge.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="358">
           <caret line="20" column="65" selection-start-line="20" selection-start-column="65" selection-end-line="20" selection-end-column="65" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/visfx/examples/ExGraphOfMethods.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="32" column="54" selection-start-line="32" selection-start-column="54" selection-end-line="32" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/findCall/ListingAllMethods.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="40" column="41" selection-start-line="40" selection-start-column="41" selection-end-line="40" selection-end-column="41" />
-          <folding>
-            <element signature="e#7335#7336#0" expanded="true" />
-            <element signature="e#7381#7382#0" expanded="true" />
-            <element signature="e#7449#7450#0" expanded="true" />
-            <element signature="e#7491#7492#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/graphLibraries/vis.min.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="460">
-          <caret line="23" column="3" selection-start-line="23" selection-start-column="3" selection-end-line="23" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/baseGraph.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="54" column="10" selection-start-line="54" selection-start-column="10" selection-end-line="54" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/visfx/gui/GraphView.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="20">
-          <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/visfx/examples/TwoNodeGraph.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="25" column="5" selection-start-line="25" selection-start-column="5" selection-end-line="25" selection-end-column="5" />
         </state>
       </provider>
     </entry>
@@ -822,25 +739,175 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/example_classes/ExampleClass.java">
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/javaparser/javaparser-core/3.15.14/javaparser-core-3.15.14-sources.jar!/com/github/javaparser/StaticJavaParser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="20" column="25" lean-forward="true" selection-start-line="20" selection-start-column="25" selection-end-line="20" selection-end-column="25" />
+        <state relative-caret-position="180">
+          <caret line="49" column="19" selection-start-line="49" selection-start-column="19" selection-end-line="49" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/visfx/examples/TwoNodeGraph.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="400">
+          <caret line="25" column="5" selection-start-line="25" selection-start-column="5" selection-end-line="25" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/visfx/gui/GraphView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="600">
+          <caret line="44" selection-start-line="44" selection-end-line="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/baseGraph.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1080">
+          <caret line="54" column="10" selection-start-line="54" selection-start-column="10" selection-end-line="54" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/graphLibraries/vis.min.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="460">
+          <caret line="23" column="3" selection-start-line="23" selection-start-column="3" selection-end-line="23" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/visfx/graph/VisNode.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="21" selection-start-line="21" selection-end-line="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/javaparser/javaparser-core/3.15.14/javaparser-core-3.15.14-sources.jar!/com/github/javaparser/ast/body/MethodDeclaration.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="423">
+          <caret line="323" column="24" lean-forward="true" selection-start-line="323" selection-start-column="11" selection-end-line="323" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/javaparser/javaparser-core/3.15.14/javaparser-core-3.15.14-sources.jar!/com/github/javaparser/resolution/declarations/ResolvedMethodDeclaration.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="359">
+          <caret line="47" column="16" lean-forward="true" selection-start-line="47" selection-start-column="16" selection-end-line="47" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/javaparser/javaparser-symbol-solver-core/3.15.14/javaparser-symbol-solver-core-3.15.14-sources.jar!/com/github/javaparser/symbolsolver/javaparsermodel/contexts/MethodCallExprContext.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="14">
+          <caret line="154" column="61" selection-start-line="154" selection-start-column="61" selection-end-line="154" selection-end-column="61" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/javaparser/javaparser-symbol-solver-core/3.15.14/javaparser-symbol-solver-core-3.15.14-sources.jar!/com/github/javaparser/symbolsolver/javaparsermodel/contexts/AbstractJavaParserContext.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1880">
+          <caret line="142" selection-start-line="142" selection-end-line="142" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/javaparser/javaparser-symbol-solver-core/3.15.14/javaparser-symbol-solver-core-3.15.14-sources.jar!/com/github/javaparser/symbolsolver/javaparsermodel/JavaParserFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="53" selection-start-line="53" selection-end-line="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/javaparser/javaparser-symbol-solver-core/3.15.14/javaparser-symbol-solver-core-3.15.14-sources.jar!/com/github/javaparser/symbolsolver/javaparsermodel/contexts/BlockStmtContext.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="39" selection-start-line="39" selection-end-line="39" />
           <folding>
-            <element signature="e#611#612#0" expanded="true" />
-            <element signature="e#676#677#0" expanded="true" />
+            <element signature="e#1489#1490#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/javaparser/javaparser-symbol-solver-core/3.15.14/javaparser-symbol-solver-core-3.15.14-sources.jar!/com/github/javaparser/symbolsolver/core/resolution/Context.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="500">
+          <caret line="58" selection-start-line="58" selection-end-line="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/javaparser/javaparser-symbol-solver-core/3.15.14/javaparser-symbol-solver-core-3.15.14-sources.jar!/com/github/javaparser/symbolsolver/javaparsermodel/contexts/StatementContext.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3260">
+          <caret line="202" selection-start-line="202" selection-end-line="202" />
+          <folding>
+            <element signature="e#9181#9182#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_151/src.zip!/java/lang/Math.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="212">
+          <caret line="104" column="19" selection-start-line="104" selection-start-column="19" selection-end-line="104" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/findCall/ResolveMethodCalls.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="17" lean-forward="true" selection-start-line="17" selection-start-column="19" selection-end-line="17" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/javaparser/javaparser-symbol-solver-core/3.15.14/javaparser-symbol-solver-core-3.15.14-sources.jar!/com/github/javaparser/symbolsolver/javaparsermodel/JavaParserFacade.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="9660">
+          <caret line="543" selection-start-line="543" selection-end-line="543" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/example_classes/ChildExampleClass.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="8" column="24" selection-start-line="8" selection-start-column="24" selection-end-line="8" selection-end-column="24" />
+        <state relative-caret-position="120">
+          <caret line="6" column="27" selection-start-line="6" selection-start-column="27" selection-end-line="6" selection-end-column="27" />
           <folding>
-            <element signature="e#124#125#0" expanded="true" />
-            <element signature="e#171#172#0" expanded="true" />
+            <element signature="e#354#355#0" expanded="true" />
+            <element signature="e#422#423#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/example_classes/ExampleClass.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="455">
+          <caret line="32" selection-start-line="32" selection-end-line="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/findCall/MethodCallInformation.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="520">
+          <caret line="30" lean-forward="true" selection-start-line="30" selection-end-line="30" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1000#1001#0" expanded="true" />
+            <element signature="e#1041#1042#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/findCall/ListingAllMethods.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="460">
+          <caret line="47" column="44" selection-start-line="47" selection-start-column="44" selection-end-line="47" selection-end-column="44" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/visfx/examples/ExGraphOfMethods.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="461">
+          <caret line="56" column="36" selection-start-line="56" selection-start-column="23" selection-end-line="56" selection-end-column="36" />
         </state>
       </provider>
     </entry>
