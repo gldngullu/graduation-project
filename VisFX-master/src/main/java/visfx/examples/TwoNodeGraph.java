@@ -18,8 +18,7 @@ public class TwoNodeGraph extends Application {
         VisGraph graph = new VisGraph();
         VisNode node1 = new VisNode(1,"a");
         VisNode node2 = new VisNode(2,"b");
-        VisEdge edge = new VisEdge(node1,node2,"to","part_of");
-        System.out.println(edge.getArrows());
+        VisEdge edge = new VisEdge(node1,node2,"to","part_of \n part_of_two");
         graph.addNodes(node1,node2);
         graph.addEdges(edge);
         return graph;

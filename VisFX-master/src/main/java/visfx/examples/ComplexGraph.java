@@ -24,7 +24,7 @@ public class ComplexGraph extends Application {
         VisNode firstSonSon = new VisNode(6,"Luke");
         VisEdge edge1 = new VisEdge(father,mother,"to;from","married");
         VisEdge edge2 = new VisEdge(father,firstSon,"to","father_to");
-        VisEdge edge3 = new VisEdge(father,secondSon,"to","father_to");
+        VisEdge edge3 = new VisEdge(father,secondSon,"to","father_to \n father_to \n father_to");
         VisEdge edge4 = new VisEdge(father,firstDaughter,"to","father_to");
         VisEdge edge5 = new VisEdge(mother,firstSon,"to","mother_to");
         VisEdge edge6 = new VisEdge(mother,secondSon,"to","mother_to");

@@ -3,19 +3,18 @@ package visfx.examples;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import findCall.ListingAllMethods;
 import findCall.MethodCallInformation;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import javassist.compiler.ast.MethodDecl;
-import javassist.compiler.ast.Visitor;
-import javassist.expr.MethodCall;
 import visfx.api.VisFx;
 import visfx.graph.VisEdge;
 import visfx.graph.VisGraph;
 import visfx.graph.VisNode;
 
+import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +24,7 @@ public class ExGraphOfMethods extends Application {
     private HashMap<BigInteger, VisNode> nodesOfGraph = new HashMap<>();
     private HashMap<BigInteger, VisEdge> edgesOfGraph = new HashMap<>();
     private int nodeCount = 0;
+    private ArrayList<String> watchNowDeleteLater = new ArrayList<>();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -40,24 +40,25 @@ public class ExGraphOfMethods extends Application {
 
         for (int i = 0; i < methodCalls.size(); i++) {
             MethodCallInformation tempMethod = methodCalls.get(i);
-            Node caller = getCallerOfMethodCall(tempMethod);
+            Node caller = tempMethod.getParentNode();
             String sourceNodeLabel = "";
-            if(caller instanceof MethodDeclaration)
-                sourceNodeLabel =  getClass(caller).getNameAsString() + "\n" + ((MethodDeclaration) caller).getNameAsString();
-            else if(caller instanceof ClassOrInterfaceDeclaration)
-                sourceNodeLabel = ((ClassOrInterfaceDeclaration) caller).getNameAsString();
-
-            String targetNodeLabel;
-            if(tempMethod.getActualMethodCalled() != null){
-                targetNodeLabel = getClass(tempMethod.getActualMethodCalled()).getNameAsString() + "\n" + tempMethod.getMethodCall().getName().asString();
-            } else {
-                targetNodeLabel = tempMethod.getMethodCall().getName().asString();
+            String sourceNodeKeyString = "";
+            if(caller instanceof MethodDeclaration){
+                sourceNodeLabel =  ((MethodDeclaration)caller).resolve().getClassName() + "\n" + ((MethodDeclaration) caller).getNameAsString();
+                sourceNodeKeyString = sourceNodeLabel + getParamsAsString((MethodDeclaration)caller);
             }
+            else if(caller instanceof ClassOrInterfaceDeclaration) {
+                sourceNodeLabel = ((ClassOrInterfaceDeclaration) caller).getNameAsString();
+                sourceNodeKeyString = sourceNodeLabel;
+            }
+            ResolvedMethodDeclaration targetMethod = tempMethod.getResolvedMethod();
+            String targetNodeLabel = targetMethod.getClassName() + "\n" + targetMethod.getName();
+            String targetNodeKeyString = targetNodeLabel + getParamsAsString(targetMethod);
 
-            BigInteger sourceNodeKey = addNewNode(sourceNodeLabel + "()");
-            BigInteger targetNodeKey = addNewNode(targetNodeLabel + "()");
+            BigInteger sourceNodeKey = addNewNode(sourceNodeLabel + "()", sourceNodeKeyString);
+            BigInteger targetNodeKey = addNewNode(targetNodeLabel + "()", targetNodeKeyString);
 
-            String edgeKeyString = sourceNodeLabel + " to " + targetNodeLabel;
+            String edgeKeyString = sourceNodeKeyString + " to " + targetNodeKeyString;
             BigInteger edgeKey = addNewEdge(edgeKeyString, sourceNodeKey, targetNodeKey);
 
             graph.addNodes(nodesOfGraph.get(sourceNodeKey), nodesOfGraph.get(targetNodeKey));
@@ -67,21 +68,30 @@ public class ExGraphOfMethods extends Application {
         return graph;
     }
 
-    private BigInteger addNewNode(String nodeLabel){
-        BigInteger tempKey = new BigInteger(nodeLabel.getBytes());
+    private String getParamsAsString(ResolvedMethodDeclaration methodDeclaration){
+        StringBuilder parameters = new StringBuilder();
+        for (int i = 0; i < methodDeclaration.getNumberOfParams(); i++) {
+            parameters.append(methodDeclaration.getParam(i).getType() + "-");
+        }
+        return parameters.toString();
+    }
+
+    private String getParamsAsString(MethodDeclaration methodDeclaration){
+        StringBuilder parameters = new StringBuilder();
+        for (int i = 0; i < methodDeclaration.getParameters().size(); i++) {
+            parameters.append(methodDeclaration.getParameter(i).getType() + "-");
+        }
+        return parameters.toString();
+    }
+
+    // Square calculationların parametrelerine bak
+    private BigInteger addNewNode(String nodeLabel, String stringNodeKey){
+        BigInteger tempKey = new BigInteger((stringNodeKey).getBytes());
         if(!nodesOfGraph.containsKey(tempKey)) {
             VisNode node = new VisNode(nodeCount++, nodeLabel);
             nodesOfGraph.put(tempKey, node);
         }
         return tempKey;
-    }
-
-    private ClassOrInterfaceDeclaration getClass(Node node){
-        Node classOfNode =  node.getParentNode().get();
-        while(!(classOfNode instanceof ClassOrInterfaceDeclaration)){
-            classOfNode = classOfNode.getParentNode().get();
-        }
-        return (ClassOrInterfaceDeclaration)classOfNode;
     }
 
     private BigInteger addNewEdge(String keyString, BigInteger sourceKey, BigInteger targetKey){
@@ -92,15 +102,4 @@ public class ExGraphOfMethods extends Application {
         }
         return tempKey;
     }
-
-    private Node getCallerOfMethodCall(MethodCallInformation methodCall){
-        Node caller =  methodCall.getMethodCall().getParentNode().get();
-        while(!(caller instanceof MethodDeclaration)){
-            if(caller instanceof ClassOrInterfaceDeclaration)
-                return caller;
-            caller = caller.getParentNode().get();
-        }
-        return caller;
-    }
-
 }

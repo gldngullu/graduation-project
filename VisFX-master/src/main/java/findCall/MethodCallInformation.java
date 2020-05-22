@@ -1,24 +1,21 @@
 package findCall;
 
-import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 
 public class MethodCallInformation {
     private MethodCallExpr methodCall;
+    private ResolvedMethodDeclaration resolvedMethod;
+    private Node parentNode;
     private int methodCallLineNumber;
-    private MethodDeclaration actualMethodCalled;
 
     public MethodCallInformation(
-            MethodCallExpr methodCall, int methodCallLineNumber){
+            MethodCallExpr methodCall, ResolvedMethodDeclaration resolvedMethod, Node parentNode, int methodCallLineNumber){
         this.methodCall = methodCall;
         this.methodCallLineNumber = methodCallLineNumber;
-    }
-
-    public MethodCallInformation(
-            MethodCallExpr methodCall, int methodCallLineNumber, MethodDeclaration actualMethod){
-        this.methodCall = methodCall;
-        this.methodCallLineNumber = methodCallLineNumber;
-        this.actualMethodCalled = actualMethod;
+        this.parentNode = parentNode;
+        this.resolvedMethod = resolvedMethod;
     }
 
     public MethodCallExpr getMethodCall() {
@@ -29,7 +26,11 @@ public class MethodCallInformation {
         return methodCallLineNumber;
     }
 
-    public MethodDeclaration getActualMethodCalled() {
-        return actualMethodCalled;
+    public Node getParentNode() {
+        return parentNode;
+    }
+
+    public ResolvedMethodDeclaration getResolvedMethod() {
+        return resolvedMethod;
     }
 }
