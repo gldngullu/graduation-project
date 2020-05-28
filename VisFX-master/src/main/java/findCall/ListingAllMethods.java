@@ -22,6 +22,7 @@ public class ListingAllMethods {
             = "C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java";
 
     private ArrayList<MethodCallInformation> allMethodCallsInProject = new ArrayList<>();
+    private ArrayList<String> deelekrg = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
         Locale.setDefault(Locale.forLanguageTag("en"));

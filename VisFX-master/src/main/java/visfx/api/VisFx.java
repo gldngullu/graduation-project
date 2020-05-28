@@ -1,9 +1,10 @@
 package visfx.api;
 
 import visfx.graph.VisGraph;
-import visfx.gui.GraphView;
 import javafx.application.Platform;
 import javafx.stage.Stage;
+import visfx.gui.GraphView;
+import visfx.gui.Main;
 
 public class VisFx{
 
@@ -13,7 +14,7 @@ public class VisFx{
      * @param mainStage the main Stage.
      */
     public static void graphNetwork(VisGraph graph , Stage mainStage){
-        GraphView graphView = new GraphView(graph);
+        Main graphView = new Main(graph);
         Platform.runLater(() -> graphView.start(mainStage));
     }
 

@@ -11,6 +11,6 @@ public class ChildExampleClass extends ExampleClass {
 
     @Override
     public String toString() {
-        return super.toString() + "\n But child is here too";
+        return "This is child example class";
     }
 }
