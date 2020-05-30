@@ -4,9 +4,9 @@ public class ChildExampleClass extends ExampleClass {
 
     public static void main(String[] args) {
         ChildExampleClass childEx = new ChildExampleClass();
-        childEx.toString();
+        System.out.println(childEx.toString());
         ExampleClass exampleClass = new ExampleClass();
-        exampleClass.toString();
+        System.out.println(exampleClass.toString());
     }
 
     @Override

@@ -20,7 +20,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
-public class ExGraphOfMethods extends Application {
+//TODO: Duplicate nodes exist, check them
+
+public class CreateGraph extends Application {
     private HashMap<BigInteger, VisNode> nodesOfGraph = new HashMap<>();
     private HashMap<BigInteger, VisEdge> edgesOfGraph = new HashMap<>();
     private int nodeCount = 0;
@@ -34,7 +36,7 @@ public class ExGraphOfMethods extends Application {
 
     private VisGraph getDummyGraph() throws Exception{
         ListingAllMethods listingAllMethods = new ListingAllMethods();
-        listingAllMethods.findMethodCalls();
+        //listingAllMethods.findMethodCalls();
         ArrayList<MethodCallInformation> methodCalls = listingAllMethods.getAllMethodCallsInProject();
         VisGraph graph = new VisGraph();
 

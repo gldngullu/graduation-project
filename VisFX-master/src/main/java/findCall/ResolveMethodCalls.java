@@ -33,11 +33,11 @@ public class ResolveMethodCalls {
         CompilationUnit cu = StaticJavaParser.parse(new File(EXAMPLE_CLASS_PATH));
         System.out.println("Methods");
         cu.findAll(MethodDeclaration.class).forEach(mce -> {
-                    System.out.println(mce.resolve().getQualifiedSignature());
+                    System.out.println("");
         }
         );
         System.out.println("Method calls");
         cu.findAll(MethodCallExpr.class).forEach(mce ->
-                System.out.println(mce.resolve().getQualifiedSignature()));
+                System.out.println(""));
     }
 }
