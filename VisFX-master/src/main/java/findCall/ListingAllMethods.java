@@ -7,6 +7,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
@@ -16,12 +17,16 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeS
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.jar.JarFile;
 
 public class ListingAllMethods {
 
@@ -29,62 +34,73 @@ public class ListingAllMethods {
             = "C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java";
 
     private ArrayList<MethodCallInformation> allMethodCallsInProject = new ArrayList<>();
+    private ArrayList<CompilationUnit> allClassesInProject = new ArrayList<>();
     private CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
-    private ArrayList<String> deelekrg = new ArrayList<>();
+    private ArrayList<String> jarFiles = new ArrayList<>();
+    private static int numberOfResolveErrors = 0;
 
     public static void main(String[] args) throws Exception {
         Locale.setDefault(Locale.forLanguageTag("en"));
         ListingAllMethods exClass = new ListingAllMethods();
-        String directoryPath = "C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java\\visfx";
+        exClass.findJarFiles("C:\\Program Files\\Java");
+        exClass.findJarFiles("C:\\Users\\gldng\\.m2\\repository");
+        String directoryPath = "C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java";
         exClass.findMethodCalls(directoryPath);
+        System.out.println("Unsolved methods:" + numberOfResolveErrors);
     }
 
-    public void findMethodCalls(String directoryPath) throws Exception{
-        ArrayList<File> classFilesInDirectory = fileFinder(directoryPath);
+    public ArrayList<MethodCallInformation> findMethodCalls(String directoryPath) throws Exception{
+        ArrayList<File> classFilesInDirectory = javaClassFinder(directoryPath);
 
         MethodCallFinder methodCallFinder = new MethodCallFinder();
 
         JavaSymbolSolver symbolSolver = new JavaSymbolSolver(combinedTypeSolver);
         StaticJavaParser.getConfiguration().setSymbolResolver(symbolSolver);
 
-        setTypeSolver(new File(PACKAGE_PATH));
+        setTypeSolver();
 
         for (File classFile: classFilesInDirectory) {
             CompilationUnit compilationUnit = StaticJavaParser.parse(classFile);
+            allClassesInProject.add(compilationUnit);
             methodCallFinder.visit(compilationUnit, null);
+        }
+
+        return allMethodCallsInProject;
+    }
+
+    private void findJarFiles(String path) {
+        File directory = new File(path);
+        for (File file: Objects.requireNonNull(directory.listFiles())) {
+            if(file.getName().endsWith(".jar"))
+                jarFiles.add(file.getPath());
+            else if(file.isDirectory()) {
+                findJarFiles(file.getPath());
+            }
         }
     }
 
-    private void setTypeSolver(File classFile){
-        ClassLoader cl = ClassLoader.getSystemClassLoader();
-        int i = 1;
-        URL[] urls = ((URLClassLoader) cl).getURLs();
+    private void setTypeSolver(){
 
+        /*
+        URL classUrl;
+        classUrl = new URL("file:///C:/Users/gldng/IdeaProjects/DatabaseBrowser/out/production/DatabaseBrowser/");
+        URL[] classUrls = { classUrl };
+        URLClassLoader ucl = new URLClassLoader(classUrls);
+        Class c = ucl.loadClass("sample.DatabaseController");
+         */
 
         try {
-            for (URL url : urls) {
-                String decodedURL = URLDecoder.decode(url.getPath(), StandardCharsets.UTF_8.toString());
-                if(decodedURL.endsWith(".jar")) {
-                    /*
-                    if(i == 43) {
-                        i++;
-                        continue;
-                    }
-                     */
-                    i++;
-                    combinedTypeSolver.add(new JarTypeSolver(decodedURL));
-                }
+            for (String path : jarFiles) {
+                combinedTypeSolver.add(new JarTypeSolver(path));
             }
         } catch (Exception io){
             System.out.println("Oops");
         }
-
-
         combinedTypeSolver.add(new ReflectionTypeSolver());
         combinedTypeSolver.add(new JavaParserTypeSolver(PACKAGE_PATH));
     }
 
-    private ArrayList<File> fileFinder(String filePath){
+    private ArrayList<File> javaClassFinder(String filePath) throws Exception{
 
         ArrayList<File> classFilesInDirectory = new ArrayList<>();
         File directory = new File(filePath);
@@ -94,7 +110,7 @@ public class ListingAllMethods {
             if(file.getName().endsWith(".java"))
                 classFilesInDirectory.add(file);
             else if(file.isDirectory()) {
-                classFilesInDirectory.addAll(fileFinder(file.getPath()));
+                classFilesInDirectory.addAll(javaClassFinder(file.getPath()));
             }
         }
         return classFilesInDirectory;
@@ -106,13 +122,19 @@ public class ListingAllMethods {
         public void visit(MethodCallExpr methodCallExpr, Void arg) {
             super.visit(methodCallExpr, arg);
             Node caller = getCallerOfMethodCall(methodCallExpr);
-            System.out.println(methodCallExpr.toString());
             try {
                 ResolvedMethodDeclaration resolvedMethod = methodCallExpr.resolve();
                 allMethodCallsInProject.add(
                         new MethodCallInformation(methodCallExpr, resolvedMethod, caller, methodCallExpr.getRange().get().begin.line));
             }catch (UnsupportedOperationException ex){
-                System.out.println("oopsie dipsiiiii lalaaaaaa pooooo".toUpperCase());
+                System.out.println("Unsupported: " + methodCallExpr.toString());
+                numberOfResolveErrors++;
+            }catch (UnsolvedSymbolException ex) {
+                System.out.println("Unsolved: " + methodCallExpr.toString());
+                numberOfResolveErrors++;
+            }catch (RuntimeException ex) {
+                System.out.println("Runtime: " + methodCallExpr.toString());
+                numberOfResolveErrors++;
             }
         }
     }
@@ -131,4 +153,7 @@ public class ListingAllMethods {
         return allMethodCallsInProject;
     }
 
+    public ArrayList<CompilationUnit> getAllClassesInProject() {
+        return allClassesInProject;
+    }
 }

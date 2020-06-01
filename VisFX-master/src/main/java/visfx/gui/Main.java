@@ -1,6 +1,9 @@
 package visfx.gui;
 
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import findCall.ListingAllMethods;
+import findCall.MethodCallInformation;
 import javafx.application.Application;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
@@ -16,8 +19,10 @@ import javafx.stage.Stage;
 import visfx.graph.VisGraph;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 
 import static javafx.geometry.Pos.CENTER_LEFT;
 import static javafx.geometry.Pos.CENTER_RIGHT;
@@ -30,9 +35,12 @@ public class Main extends Application {
     private VisGraph graph;
     private ListingAllMethods listingAllMethods = new ListingAllMethods();
     private LinkedHashMap<String, String> filePathStringMap = new LinkedHashMap<>(); //<FilePath, FileName>
+    private ArrayList<MethodCallInformation> currentProjectMethods = new ArrayList<>();
+    private TabPane sourceCodeTabs = new TabPane();
 
     @Override
     public void start(Stage primaryStage){
+        Locale.setDefault(Locale.forLanguageTag("en"));
         VBox root = new VBox();
 
         HBox firstRow = new HBox();
@@ -48,11 +56,6 @@ public class Main extends Application {
         HBox secondRow = new HBox();
         root.getChildren().add(secondRow);
 
-        TabPane sourceCodeTabs = new TabPane();
-        Tab tab1 = new Tab("First tab");
-        Tab tab2 = new Tab("Second tab");
-        Tab tab3 = new Tab("Third tab");
-        sourceCodeTabs.getTabs().addAll(tab1, tab2, tab3);
         VBox rightHalfPane = new VBox();
         secondRow.getChildren().addAll(sourceCodeTabs, rightHalfPane);
 
@@ -115,7 +118,8 @@ public class Main extends Application {
         selectButton.setOnAction(e -> {
             popupWindow.close();
             try {
-                listingAllMethods.findMethodCalls(filePathStringMap.get(filesContainer.getSelectionModel().getSelectedItem().toString()));
+                currentProjectMethods = listingAllMethods.findMethodCalls(filePathStringMap.get(filesContainer.getSelectionModel().getSelectedItem().toString()));
+                printTheSourceCode();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -129,6 +133,22 @@ public class Main extends Application {
         popupWindow.setScene(scene1);
         popupWindow.setResizable(false);
         popupWindow.showAndWait();
+    }
+
+    private void printTheSourceCode(){
+        ArrayList<CompilationUnit> classes = listingAllMethods.getAllClassesInProject();
+        for (CompilationUnit tempClass : classes){
+            String className = "";
+            for (int i = tempClass.getChildNodes().size()-1; i >= 0  ; i--) {
+                if(tempClass.getChildNodes().get(i) instanceof ClassOrInterfaceDeclaration) {
+                    className = ((ClassOrInterfaceDeclaration) tempClass.getChildNodes().get(i)).getNameAsString();
+                    break;
+                }
+            }
+            Tab tempTab = new Tab(className);
+            tempTab.setText(tempClass.toString());
+            sourceCodeTabs.getTabs().add(tempTab);
+        }
     }
 
     private void getListOfFiles(File projectFile, String indent){

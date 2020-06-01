@@ -26,8 +26,8 @@ public class ExampleClass {
 
     public static int squareCalculation(int i){
         int a = 8;
-        System.out.println(doSomeMath());
-        System.out.println(doSomeMath(a));
+        doSomeMath();
+        doSomeMath(a);
         return i*i;
     }
 
