@@ -17,16 +17,9 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeS
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.jar.JarFile;
 
 public class ListingAllMethods {
 
@@ -34,7 +27,7 @@ public class ListingAllMethods {
             = "C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java";
 
     private ArrayList<MethodCallInformation> allMethodCallsInProject = new ArrayList<>();
-    private ArrayList<CompilationUnit> allClassesInProject = new ArrayList<>();
+    private ArrayList<CompilationUnit> parsedClasses = new ArrayList<>();
     private CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
     private ArrayList<String> jarFiles = new ArrayList<>();
     private static int numberOfResolveErrors = 0;
@@ -42,39 +35,34 @@ public class ListingAllMethods {
     public static void main(String[] args) throws Exception {
         Locale.setDefault(Locale.forLanguageTag("en"));
         ListingAllMethods exClass = new ListingAllMethods();
-        exClass.findJarFiles("C:\\Program Files\\Java");
-        exClass.findJarFiles("C:\\Users\\gldng\\.m2\\repository");
+        exClass.findJarFilesInDirectory("C:\\Program Files\\Java");
+        exClass.findJarFilesInDirectory("C:\\Users\\gldng\\.m2\\repository");
         String directoryPath = "C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java";
-        exClass.findMethodCalls(directoryPath);
+        //exClass.findMethodCalls(directoryPath); dont forget meee
         System.out.println("Unsolved methods:" + numberOfResolveErrors);
     }
 
-    public ArrayList<MethodCallInformation> findMethodCalls(String directoryPath) throws Exception{
-        ArrayList<File> classFilesInDirectory = javaClassFinder(directoryPath);
+    public ArrayList<MethodCallInformation> findMethodCalls(){
 
         MethodCallFinder methodCallFinder = new MethodCallFinder();
 
         JavaSymbolSolver symbolSolver = new JavaSymbolSolver(combinedTypeSolver);
         StaticJavaParser.getConfiguration().setSymbolResolver(symbolSolver);
-
         setTypeSolver();
 
-        for (File classFile: classFilesInDirectory) {
-            CompilationUnit compilationUnit = StaticJavaParser.parse(classFile);
-            allClassesInProject.add(compilationUnit);
-            methodCallFinder.visit(compilationUnit, null);
+        for (CompilationUnit parsedClass : parsedClasses) {
+            methodCallFinder.visit(parsedClass, null);
         }
-
         return allMethodCallsInProject;
     }
 
-    private void findJarFiles(String path) {
+    public void findJarFilesInDirectory(String path) {
         File directory = new File(path);
         for (File file: Objects.requireNonNull(directory.listFiles())) {
             if(file.getName().endsWith(".jar"))
                 jarFiles.add(file.getPath());
             else if(file.isDirectory()) {
-                findJarFiles(file.getPath());
+                findJarFilesInDirectory(file.getPath());
             }
         }
     }
@@ -100,20 +88,22 @@ public class ListingAllMethods {
         combinedTypeSolver.add(new JavaParserTypeSolver(PACKAGE_PATH));
     }
 
-    private ArrayList<File> javaClassFinder(String filePath) throws Exception{
-
-        ArrayList<File> classFilesInDirectory = new ArrayList<>();
+    public void findJavaFiles(String filePath){
         File directory = new File(filePath);
-
-        File[] allFilesInDirectory = directory.listFiles();
-        for (File file: allFilesInDirectory) {
-            if(file.getName().endsWith(".java"))
-                classFilesInDirectory.add(file);
-            else if(file.isDirectory()) {
-                classFilesInDirectory.addAll(javaClassFinder(file.getPath()));
+        try {
+            File[] allFilesInDirectory = directory.listFiles();
+            for (File file : allFilesInDirectory) {
+                if (file.getName().endsWith(".java")){
+                    CompilationUnit compilationUnit = StaticJavaParser.parse(file);
+                    parsedClasses.add(compilationUnit);
+                }
+                else if (file.isDirectory()) {
+                    findJavaFiles(file.getPath());
+                }
             }
+        }catch (Exception ex){
+            System.out.println("Error finding source code files");
         }
-        return classFilesInDirectory;
     }
 
     private class MethodCallFinder extends VoidVisitorAdapter<Void> {
@@ -153,7 +143,7 @@ public class ListingAllMethods {
         return allMethodCallsInProject;
     }
 
-    public ArrayList<CompilationUnit> getAllClassesInProject() {
-        return allClassesInProject;
+    public ArrayList<CompilationUnit> getParsedClasses() {
+        return parsedClasses;
     }
 }

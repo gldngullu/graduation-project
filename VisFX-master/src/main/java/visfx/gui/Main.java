@@ -5,9 +5,12 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import findCall.ListingAllMethods;
 import findCall.MethodCallInformation;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -20,7 +23,6 @@ import visfx.graph.VisGraph;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 
@@ -34,9 +36,11 @@ public class Main extends Application {
 
     private VisGraph graph;
     private ListingAllMethods listingAllMethods = new ListingAllMethods();
-    private LinkedHashMap<String, String> filePathStringMap = new LinkedHashMap<>(); //<FilePath, FileName>
+    private LinkedHashMap<String, String> filePathStringMap = new LinkedHashMap<>(); //<FileName, FilePath>
     private ArrayList<MethodCallInformation> currentProjectMethods = new ArrayList<>();
     private TabPane sourceCodeTabs = new TabPane();
+    private File projectFile;
+    ObservableList<String> observableDirectories = FXCollections.observableArrayList();
 
     @Override
     public void start(Stage primaryStage){
@@ -92,16 +96,15 @@ public class Main extends Application {
         this.graph = graph;
     }
 
-    private void handleOpenFileButtonClick(ActionEvent event)
-    {
+    private void handleOpenFileButtonClick(ActionEvent event) {
         DirectoryChooser fileChooser = new DirectoryChooser();
         fileChooser.setTitle("Select java project to analyze");
         fileChooser.setInitialDirectory(new File("C:\\Users\\gldng\\IdeaProjects"));
-        File file = fileChooser.showDialog(((Button)event.getSource()).getScene().getWindow());
-        determineSourcePackage(file);
+        projectFile = fileChooser.showDialog(((Button)event.getSource()).getScene().getWindow());
+        determineSourcePackage();
     }
 
-    private void determineSourcePackage(File projectFile){
+    private void determineSourcePackage(){
 
         Stage popupWindow = new Stage();
 
@@ -118,7 +121,8 @@ public class Main extends Application {
         selectButton.setOnAction(e -> {
             popupWindow.close();
             try {
-                currentProjectMethods = listingAllMethods.findMethodCalls(filePathStringMap.get(filesContainer.getSelectionModel().getSelectedItem().toString()));
+                listingAllMethods.findJavaFiles(filePathStringMap.get(filesContainer.getSelectionModel().getSelectedItem()));
+                determineLibraries();
                 printTheSourceCode();
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -135,8 +139,56 @@ public class Main extends Application {
         popupWindow.showAndWait();
     }
 
+    private void determineLibraries(){
+
+        Stage popupWindow = new Stage();
+
+        popupWindow.initModality(Modality.APPLICATION_MODAL);
+        popupWindow.setTitle("Select library directories");
+        ListView directoriesList = new ListView();
+        directoriesList.setPrefHeight(400);
+
+        Label label = new Label("Please select the directories for libraries that are used in your project. \n" +
+                "You can either select the whole library directory(Maven \".m2\") or the single libraries");
+        Button selectDirectoryButton = new Button("Add library directory");
+        Button doneWithDirectoriesButton = new Button("Save these libraries");
+
+        ArrayList<File> libraryDirectories = new ArrayList<>();
+        directoriesList.setItems(observableDirectories);
+
+
+        selectDirectoryButton.setOnAction(e -> {
+            DirectoryChooser fileChooser = new DirectoryChooser();
+            fileChooser.setTitle("Select library directory");
+            fileChooser.setInitialDirectory(new File("C:\\"));
+            File file = fileChooser.showDialog(((Button)e.getSource()).getScene().getWindow());
+            libraryDirectories.add(file);
+            observableDirectories.add("Directory name: " + file.getName() + "- Path: " +file.getPath());
+        });
+
+        doneWithDirectoriesButton.setOnAction(event -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do you confirm the selected directories?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+            alert.showAndWait();
+            if (alert.getResult() == ButtonType.YES) {
+                popupWindow.close();
+                for (File file : libraryDirectories) {
+                    listingAllMethods.findJarFilesInDirectory(file.getPath());
+                }
+            }
+        });
+
+        VBox layout= new VBox(10);
+        layout.getChildren().addAll(label, directoriesList, selectDirectoryButton, doneWithDirectoriesButton);
+        layout.setAlignment(Pos.CENTER);
+        label.setAlignment(CENTER_LEFT);
+        Scene scene1= new Scene(layout, 500, 600);
+        popupWindow.setScene(scene1);
+        popupWindow.setResizable(false);
+        popupWindow.showAndWait();
+    }
+
     private void printTheSourceCode(){
-        ArrayList<CompilationUnit> classes = listingAllMethods.getAllClassesInProject();
+        ArrayList<CompilationUnit> classes = listingAllMethods.getParsedClasses();
         for (CompilationUnit tempClass : classes){
             String className = "";
             for (int i = tempClass.getChildNodes().size()-1; i >= 0  ; i--) {
@@ -146,7 +198,8 @@ public class Main extends Application {
                 }
             }
             Tab tempTab = new Tab(className);
-            tempTab.setText(tempClass.toString());
+            TextArea sourceCode = new TextArea(tempClass.toString());
+            tempTab.setContent(sourceCode);
             sourceCodeTabs.getTabs().add(tempTab);
         }
     }
