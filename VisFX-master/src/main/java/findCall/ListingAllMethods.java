@@ -58,10 +58,13 @@ public class ListingAllMethods {
 
     public void findJarFilesInDirectory(String path) {
         File directory = new File(path);
-        for (File file: Objects.requireNonNull(directory.listFiles())) {
-            if(file.getName().endsWith(".jar"))
+        File[] directoryFiles = directory.listFiles();
+        if(directoryFiles.length == 0)
+            return;
+        for (File file : directory.listFiles()) {
+            if (file.getName().endsWith(".jar"))
                 jarFiles.add(file.getPath());
-            else if(file.isDirectory()) {
+            else if (file.isDirectory()) {
                 findJarFilesInDirectory(file.getPath());
             }
         }

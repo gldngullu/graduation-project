@@ -3,7 +3,6 @@ package visfx.examples;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import findCall.ListingAllMethods;
 import findCall.MethodCallInformation;
@@ -14,7 +13,6 @@ import visfx.graph.VisEdge;
 import visfx.graph.VisGraph;
 import visfx.graph.VisNode;
 
-import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,10 +29,10 @@ public class CreateGraph extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Locale.setDefault(Locale.forLanguageTag("en"));
-        VisFx.graphNetwork(getDummyGraph(),primaryStage);
+        VisFx.graphNetwork(buildGraph(),primaryStage);
     }
 
-    private VisGraph getDummyGraph() throws Exception{
+    private VisGraph buildGraph() throws Exception{
         ListingAllMethods listingAllMethods = new ListingAllMethods();
         //listingAllMethods.findMethodCalls();
         ArrayList<MethodCallInformation> methodCalls = listingAllMethods.getAllMethodCallsInProject();

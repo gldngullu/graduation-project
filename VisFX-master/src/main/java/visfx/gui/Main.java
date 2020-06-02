@@ -25,9 +25,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Observable;
 
-import static javafx.geometry.Pos.CENTER_LEFT;
-import static javafx.geometry.Pos.CENTER_RIGHT;
+import static javafx.geometry.Pos.*;
 
 public class Main extends Application {
 
@@ -40,30 +40,29 @@ public class Main extends Application {
     private ArrayList<MethodCallInformation> currentProjectMethods = new ArrayList<>();
     private TabPane sourceCodeTabs = new TabPane();
     private File projectFile;
-    ObservableList<String> observableDirectories = FXCollections.observableArrayList();
 
     @Override
     public void start(Stage primaryStage){
         Locale.setDefault(Locale.forLanguageTag("en"));
         VBox root = new VBox();
 
-        HBox firstRow = new HBox();
+        HBox firstRow = new HBox();//firstRow includes top row of buttons
         root.getChildren().add(firstRow);
         root.setAlignment(Pos.CENTER_LEFT);
         Button openFileButton = new Button("Open New File");
         Button contactButton = new Button("Contact");
         Button informationButton = new Button("?");
         firstRow.getChildren().addAll(openFileButton, contactButton, informationButton);
-
         openFileButton.setOnAction(this::handleOpenFileButtonClick);
 
-        HBox secondRow = new HBox();
+        HBox secondRow = new HBox();//secondRow includes the whole bottom part
+        sourceCodeTabs.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
         root.getChildren().add(secondRow);
 
-        VBox rightHalfPane = new VBox();
+        VBox rightHalfPane = new VBox();//rightHalfPane includes settings and graph
         secondRow.getChildren().addAll(sourceCodeTabs, rightHalfPane);
 
-        BorderPane settingLine1 = new BorderPane();
+        BorderPane settingLine1 = new BorderPane();//settingLine1 includes button and checkbox
         rightHalfPane.getChildren().add(settingLine1);
         Button createGraphForProject = new Button("Create graph for whole project");
         CheckBox seeConnectedMethods = new CheckBox("See connected methods on click");
@@ -71,7 +70,7 @@ public class Main extends Application {
         settingLine1.setRight(seeConnectedMethods);
         settingLine1.setAlignment(seeConnectedMethods, CENTER_RIGHT);
 
-        BorderPane settingLine2 = new BorderPane();
+        BorderPane settingLine2 = new BorderPane();//settingLine2 includes button and search box
         rightHalfPane.getChildren().add(settingLine2);
         Button createGraphForFile = new Button("Create graph for current class ");
         TextField searchBox = new TextField();
@@ -81,7 +80,7 @@ public class Main extends Application {
 
         rightHalfPane.getChildren().add(webView);
         //webEngine.load((getClass().getClassLoader().getResource("baseGraph.html")).toString());
-        //setGraph();
+        //buildGraph();
 
         Scene scene = new Scene(root,1280, 720);
         sourceCodeTabs.setMinWidth(scene.getWidth()*(0.4));
@@ -115,7 +114,9 @@ public class Main extends Application {
         getListOfFiles(projectFile, "");
         filesContainer.getItems().addAll(filePathStringMap.keySet());
 
-        Label label = new Label("Please select the source directory for the project.\nThis file is the smallest directory which includes all the packages.");
+        Label label = new Label("Please select the source directory for the project.\nThis file is the smallest directory which includes all the packages(if there is any) of the source codes.");
+        label.setId("infoLabel");
+        label.setMinHeight(Region.USE_PREF_SIZE);
         Button selectButton = new Button("Choose selected directory");
 
         selectButton.setOnAction(e -> {
@@ -130,10 +131,10 @@ public class Main extends Application {
         });
 
         VBox layout= new VBox(10);
+        layout.setId("popupWindow");
         layout.getChildren().addAll(label, filesContainer, selectButton);
-        layout.setAlignment(Pos.CENTER);
-        label.setAlignment(CENTER_LEFT);
         Scene scene1= new Scene(layout, 400, 600);
+        scene1.getStylesheets().add("mainStylesheet.css");
         popupWindow.setScene(scene1);
         popupWindow.setResizable(false);
         popupWindow.showAndWait();
@@ -145,17 +146,23 @@ public class Main extends Application {
 
         popupWindow.initModality(Modality.APPLICATION_MODAL);
         popupWindow.setTitle("Select library directories");
-        ListView directoriesList = new ListView();
-        directoriesList.setPrefHeight(400);
+        ListView<String> directoriesList = new ListView();
+        directoriesList.setPrefHeight(350);
 
         Label label = new Label("Please select the directories for libraries that are used in your project. \n" +
-                "You can either select the whole library directory(Maven \".m2\") or the single libraries");
+                "You can either select the whole library directory(For maven \".m2\") or the single library directories one by one.\n" +
+                "If there is not any used in the project, you may just skip this step");
+        label.setId("infoLabel");
+        label.setMinHeight(Region.USE_PREF_SIZE);
         Button selectDirectoryButton = new Button("Add library directory");
         Button doneWithDirectoriesButton = new Button("Save these libraries");
+
+        ObservableList<String> observableDirectories = FXCollections.observableArrayList();
 
         ArrayList<File> libraryDirectories = new ArrayList<>();
         directoriesList.setItems(observableDirectories);
 
+        // TODO Listview do not update
 
         selectDirectoryButton.setOnAction(e -> {
             DirectoryChooser fileChooser = new DirectoryChooser();
@@ -164,7 +171,11 @@ public class Main extends Application {
             File file = fileChooser.showDialog(((Button)e.getSource()).getScene().getWindow());
             libraryDirectories.add(file);
             observableDirectories.add("Directory name: " + file.getName() + "- Path: " +file.getPath());
+            directoriesList.getItems().clear();
+            directoriesList.setItems(observableDirectories);
         });
+
+
 
         doneWithDirectoriesButton.setOnAction(event -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do you confirm the selected directories?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
@@ -177,11 +188,11 @@ public class Main extends Application {
             }
         });
 
-        VBox layout= new VBox(10);
+        VBox layout = new VBox(10);
+        layout.setId("popupWindow");
         layout.getChildren().addAll(label, directoriesList, selectDirectoryButton, doneWithDirectoriesButton);
-        layout.setAlignment(Pos.CENTER);
-        label.setAlignment(CENTER_LEFT);
         Scene scene1= new Scene(layout, 500, 600);
+        scene1.getStylesheets().add("mainStylesheet.css");
         popupWindow.setScene(scene1);
         popupWindow.setResizable(false);
         popupWindow.showAndWait();
@@ -189,6 +200,7 @@ public class Main extends Application {
 
     private void printTheSourceCode(){
         ArrayList<CompilationUnit> classes = listingAllMethods.getParsedClasses();
+        sourceCodeTabs.getTabs().clear();
         for (CompilationUnit tempClass : classes){
             String className = "";
             for (int i = tempClass.getChildNodes().size()-1; i >= 0  ; i--) {
@@ -199,6 +211,7 @@ public class Main extends Application {
             }
             Tab tempTab = new Tab(className);
             TextArea sourceCode = new TextArea(tempClass.toString());
+            sourceCode.setEditable(false);
             tempTab.setContent(sourceCode);
             sourceCodeTabs.getTabs().add(tempTab);
         }
@@ -214,7 +227,7 @@ public class Main extends Application {
         }
     }
 
-    private void setGraph(){
+    private void buildGraph(){
         String script = "setTheData(" + graph.getNodesJson() +  "," + graph.getEdgesJson() + ")";
         webEngine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue == Worker.State.SUCCEEDED)
