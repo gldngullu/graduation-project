@@ -4,6 +4,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
+import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import findCall.ListingAllMethods;
 import findCall.MethodCallInformation;
 import javafx.application.Application;
@@ -20,22 +21,16 @@ import java.util.Locale;
 
 //TODO: Duplicate nodes exist, check them
 
-public class CreateGraph extends Application {
+public class CreateGraph {
     private HashMap<BigInteger, VisNode> nodesOfGraph = new HashMap<>();
     private HashMap<BigInteger, VisEdge> edgesOfGraph = new HashMap<>();
     private int nodeCount = 0;
     private ArrayList<String> watchNowDeleteLater = new ArrayList<>();
+    private JavaParserFacade typeSolver;
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        Locale.setDefault(Locale.forLanguageTag("en"));
-        VisFx.graphNetwork(buildGraph(),primaryStage);
-    }
 
-    private VisGraph buildGraph() throws Exception{
-        ListingAllMethods listingAllMethods = new ListingAllMethods();
-        //listingAllMethods.findMethodCalls();
-        ArrayList<MethodCallInformation> methodCalls = listingAllMethods.getAllMethodCallsInProject();
+    public VisGraph buildGraph(ArrayList<MethodCallInformation> methodCalls) {
+        this.typeSolver = typeSolver;
         VisGraph graph = new VisGraph();
 
         for (int i = 0; i < methodCalls.size(); i++) {
@@ -44,7 +39,7 @@ public class CreateGraph extends Application {
             String sourceNodeLabel = "";
             String sourceNodeKeyString = "";
             if(caller instanceof MethodDeclaration){
-                sourceNodeLabel =  ((MethodDeclaration)caller).resolve().getClassName() + "\n" + ((MethodDeclaration) caller).getNameAsString();
+                sourceNodeLabel =  "My Class name" + "\n" + ((MethodDeclaration) caller).getNameAsString();
                 sourceNodeKeyString = sourceNodeLabel + getParamsAsString((MethodDeclaration)caller);
             }
             else if(caller instanceof ClassOrInterfaceDeclaration) {

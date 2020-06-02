@@ -14,7 +14,7 @@ public class VisFx{
      * @param mainStage the main Stage.
      */
     public static void graphNetwork(VisGraph graph , Stage mainStage){
-        Main graphView = new Main();
+        Main graphView = new Main();//Normalde graph burada parametre
         Platform.runLater(() -> graphView.start(mainStage));
     }
 

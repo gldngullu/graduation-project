@@ -9,36 +9,33 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
-import com.github.javaparser.symbolsolver.JavaSymbolSolver;
+import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Objects;
 
 public class ListingAllMethods {
 
-    private static final String PACKAGE_PATH
-            = "C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java";
-
+    private static String packagePath;
     private ArrayList<MethodCallInformation> allMethodCallsInProject = new ArrayList<>();
     private ArrayList<CompilationUnit> parsedClasses = new ArrayList<>();
-    private CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
+    private JavaParserFacade javaParserFacade;
     private ArrayList<String> jarFiles = new ArrayList<>();
     private static int numberOfResolveErrors = 0;
 
     public static void main(String[] args) throws Exception {
         Locale.setDefault(Locale.forLanguageTag("en"));
+        packagePath = "C:\\Users\\gldng\\IdeaProjects\\button\\src";
         ListingAllMethods exClass = new ListingAllMethods();
+        exClass.findJavaFiles(packagePath);
         exClass.findJarFilesInDirectory("C:\\Program Files\\Java");
-        exClass.findJarFilesInDirectory("C:\\Users\\gldng\\.m2\\repository");
-        String directoryPath = "C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java";
-        //exClass.findMethodCalls(directoryPath); dont forget meee
+        //exClass.findJarFilesInDirectory("C:\\Users\\gldng\\.m2\\repository");
+        exClass.findMethodCalls();
         System.out.println("Unsolved methods:" + numberOfResolveErrors);
     }
 
@@ -46,8 +43,6 @@ public class ListingAllMethods {
 
         MethodCallFinder methodCallFinder = new MethodCallFinder();
 
-        JavaSymbolSolver symbolSolver = new JavaSymbolSolver(combinedTypeSolver);
-        StaticJavaParser.getConfiguration().setSymbolResolver(symbolSolver);
         setTypeSolver();
 
         for (CompilationUnit parsedClass : parsedClasses) {
@@ -71,15 +66,7 @@ public class ListingAllMethods {
     }
 
     private void setTypeSolver(){
-
-        /*
-        URL classUrl;
-        classUrl = new URL("file:///C:/Users/gldng/IdeaProjects/DatabaseBrowser/out/production/DatabaseBrowser/");
-        URL[] classUrls = { classUrl };
-        URLClassLoader ucl = new URLClassLoader(classUrls);
-        Class c = ucl.loadClass("sample.DatabaseController");
-         */
-
+        CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
         try {
             for (String path : jarFiles) {
                 combinedTypeSolver.add(new JarTypeSolver(path));
@@ -88,7 +75,8 @@ public class ListingAllMethods {
             System.out.println("Oops");
         }
         combinedTypeSolver.add(new ReflectionTypeSolver());
-        combinedTypeSolver.add(new JavaParserTypeSolver(PACKAGE_PATH));
+        combinedTypeSolver.add(new JavaParserTypeSolver(packagePath));
+        javaParserFacade = JavaParserFacade.get(combinedTypeSolver);
     }
 
     public void findJavaFiles(String filePath){
@@ -116,7 +104,7 @@ public class ListingAllMethods {
             super.visit(methodCallExpr, arg);
             Node caller = getCallerOfMethodCall(methodCallExpr);
             try {
-                ResolvedMethodDeclaration resolvedMethod = methodCallExpr.resolve();
+                ResolvedMethodDeclaration resolvedMethod = javaParserFacade.solve(methodCallExpr).getCorrespondingDeclaration();
                 allMethodCallsInProject.add(
                         new MethodCallInformation(methodCallExpr, resolvedMethod, caller, methodCallExpr.getRange().get().begin.line));
             }catch (UnsupportedOperationException ex){
@@ -126,6 +114,8 @@ public class ListingAllMethods {
                 System.out.println("Unsolved: " + methodCallExpr.toString());
                 numberOfResolveErrors++;
             }catch (RuntimeException ex) {
+                if(numberOfResolveErrors == 1)
+                    ex.printStackTrace();
                 System.out.println("Runtime: " + methodCallExpr.toString());
                 numberOfResolveErrors++;
             }
@@ -142,11 +132,11 @@ public class ListingAllMethods {
         return caller;
     }
 
-    public ArrayList<MethodCallInformation> getAllMethodCallsInProject() {
-        return allMethodCallsInProject;
-    }
-
     public ArrayList<CompilationUnit> getParsedClasses() {
         return parsedClasses;
+    }
+
+    public static void setPackagePath(String packagePath) {
+        ListingAllMethods.packagePath = packagePath;
     }
 }

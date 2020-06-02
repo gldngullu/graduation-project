@@ -19,6 +19,7 @@ import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import visfx.examples.CreateGraph;
 import visfx.graph.VisGraph;
 
 import java.io.File;
@@ -36,10 +37,13 @@ public class Main extends Application {
 
     private VisGraph graph;
     private ListingAllMethods listingAllMethods = new ListingAllMethods();
+    private CreateGraph createGraph = new CreateGraph();
     private LinkedHashMap<String, String> filePathStringMap = new LinkedHashMap<>(); //<FileName, FilePath>
     private ArrayList<MethodCallInformation> currentProjectMethods = new ArrayList<>();
     private TabPane sourceCodeTabs = new TabPane();
     private File projectFile;
+    private Button createGraphForFile;
+    private Button createGraphForProject;
 
     @Override
     public void start(Stage primaryStage){
@@ -64,7 +68,9 @@ public class Main extends Application {
 
         BorderPane settingLine1 = new BorderPane();//settingLine1 includes button and checkbox
         rightHalfPane.getChildren().add(settingLine1);
-        Button createGraphForProject = new Button("Create graph for whole project");
+        createGraphForProject = new Button("Create graph for whole project");
+        createGraphForProject.setDisable(true);
+        createGraphForProject.setOnAction(this::getMethodCallsForProject);
         CheckBox seeConnectedMethods = new CheckBox("See connected methods on click");
         settingLine1.setLeft(createGraphForProject);
         settingLine1.setRight(seeConnectedMethods);
@@ -72,15 +78,15 @@ public class Main extends Application {
 
         BorderPane settingLine2 = new BorderPane();//settingLine2 includes button and search box
         rightHalfPane.getChildren().add(settingLine2);
-        Button createGraphForFile = new Button("Create graph for current class ");
+        createGraphForFile = new Button("Create graph for current class ");
+        createGraphForFile.setOnAction(this::getMethodCallsForProject);
+        createGraphForFile.setDisable(true);
         TextField searchBox = new TextField();
         settingLine2.setLeft(createGraphForFile);
         settingLine2.setRight(searchBox);
         settingLine2.setAlignment(searchBox, CENTER_RIGHT);
 
         rightHalfPane.getChildren().add(webView);
-        //webEngine.load((getClass().getClassLoader().getResource("baseGraph.html")).toString());
-        //buildGraph();
 
         Scene scene = new Scene(root,1280, 720);
         sourceCodeTabs.setMinWidth(scene.getWidth()*(0.4));
@@ -89,10 +95,6 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle("Best java static call graph generator ever!");
         primaryStage.show();
-    }
-
-    public void setGraph(VisGraph graph) {
-        this.graph = graph;
     }
 
     private void handleOpenFileButtonClick(ActionEvent event) {
@@ -122,7 +124,9 @@ public class Main extends Application {
         selectButton.setOnAction(e -> {
             popupWindow.close();
             try {
-                listingAllMethods.findJavaFiles(filePathStringMap.get(filesContainer.getSelectionModel().getSelectedItem()));
+                String packagePath = filePathStringMap.get(filesContainer.getSelectionModel().getSelectedItem());
+                listingAllMethods.findJavaFiles(packagePath);
+                listingAllMethods.setPackagePath(packagePath);
                 determineLibraries();
                 printTheSourceCode();
             } catch (Exception ex) {
@@ -215,6 +219,8 @@ public class Main extends Application {
             tempTab.setContent(sourceCode);
             sourceCodeTabs.getTabs().add(tempTab);
         }
+        createGraphForProject.setDisable(false);
+        createGraphForFile.setDisable(false);
     }
 
     private void getListOfFiles(File projectFile, String indent){
@@ -227,11 +233,22 @@ public class Main extends Application {
         }
     }
 
+    private void getMethodCallsForProject(ActionEvent event){
+        currentProjectMethods = listingAllMethods.findMethodCalls();
+        graph = createGraph.buildGraph(currentProjectMethods);
+        buildGraph();
+    }
+
     private void buildGraph(){
+        webEngine.load((getClass().getClassLoader().getResource("baseGraph.html")).toString());
         String script = "setTheData(" + graph.getNodesJson() +  "," + graph.getEdgesJson() + ")";
         webEngine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue == Worker.State.SUCCEEDED)
                 webEngine.executeScript(script);
         });
+    }
+
+    public void setGraph(VisGraph graph) {
+        this.graph = graph;
     }
 }
