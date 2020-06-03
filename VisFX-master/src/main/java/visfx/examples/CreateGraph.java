@@ -4,12 +4,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
-import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
-import findCall.ListingAllMethods;
 import findCall.MethodCallInformation;
-import javafx.application.Application;
-import javafx.stage.Stage;
-import visfx.api.VisFx;
 import visfx.graph.VisEdge;
 import visfx.graph.VisGraph;
 import visfx.graph.VisNode;
@@ -17,32 +12,29 @@ import visfx.graph.VisNode;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
 
 //TODO: Duplicate nodes exist, check them
 
 public class CreateGraph {
-    private HashMap<BigInteger, VisNode> nodesOfGraph = new HashMap<>();
-    private HashMap<BigInteger, VisEdge> edgesOfGraph = new HashMap<>();
-    private int nodeCount = 0;
-    private ArrayList<String> watchNowDeleteLater = new ArrayList<>();
-    private JavaParserFacade typeSolver;
+    private HashMap<BigInteger, VisNode> nodesOfGraph;
+    private HashMap<BigInteger, VisEdge> edgesOfGraph;
+    private int nodeCount;
 
 
     public VisGraph buildGraph(ArrayList<MethodCallInformation> methodCalls) {
-        this.typeSolver = typeSolver;
         VisGraph graph = new VisGraph();
+        nodesOfGraph = new HashMap<>();
+        edgesOfGraph = new HashMap<>();
+        nodeCount = 0;
 
-        for (int i = 0; i < methodCalls.size(); i++) {
-            MethodCallInformation tempMethod = methodCalls.get(i);
+        for (MethodCallInformation tempMethod : methodCalls) {
             Node caller = tempMethod.getParentNode();
             String sourceNodeLabel = "";
             String sourceNodeKeyString = "";
-            if(caller instanceof MethodDeclaration){
-                sourceNodeLabel =  "My Class name" + "\n" + ((MethodDeclaration) caller).getNameAsString();
-                sourceNodeKeyString = sourceNodeLabel + getParamsAsString((MethodDeclaration)caller);
-            }
-            else if(caller instanceof ClassOrInterfaceDeclaration) {
+            if (caller instanceof MethodDeclaration) {
+                sourceNodeLabel = getClassAsString(caller) + "\n" + ((MethodDeclaration) caller).getNameAsString();
+                sourceNodeKeyString = sourceNodeLabel + getParamsAsString((MethodDeclaration) caller);
+            } else if (caller instanceof ClassOrInterfaceDeclaration) {
                 sourceNodeLabel = ((ClassOrInterfaceDeclaration) caller).getNameAsString();
                 sourceNodeKeyString = sourceNodeLabel;
             }
@@ -77,6 +69,13 @@ public class CreateGraph {
             parameters.append(methodDeclaration.getParameter(i).getType() + "-");
         }
         return parameters.toString();
+    }
+
+    private String getClassAsString(Node method){
+        if(method.getParentNode().get() instanceof ClassOrInterfaceDeclaration)
+            return ((ClassOrInterfaceDeclaration) method.getParentNode().get()).getNameAsString();
+        else
+            return getClassAsString(method.getParentNode().get());
     }
 
     // Square calculationların parametrelerine bak

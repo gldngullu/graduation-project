@@ -108,6 +108,7 @@
             }
         },
         layout: {
+            randomSeed: 2,
             hierarchical: {
                 enabled: true,
                 nodeSpacing: 50,
@@ -116,6 +117,31 @@
             }
         }
     };
+    /*
+
+  var options = {
+    edges: {
+            smooth: {
+                type: 'diagonalCross',
+                "roundness": 0.3
+            }
+        },
+        physics: {
+            hierarchicalRepulsion: {
+                nodeDistance: 200
+            }
+        },
+    layout:{
+      randomSeed:3,
+       hierarchical: {
+                enabled: true,
+                nodeSpacing: 50,
+                treeSpacing: 100,
+                parentCentralization: true
+            }
+    }
+  };
+     */
 
     var network = new vis.Network(container, data, options);
 
