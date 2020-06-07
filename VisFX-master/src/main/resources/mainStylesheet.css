@@ -1,7 +1,12 @@
 .root{
     -fx-background-color: linear-gradient(to top left, #ff7f50, #6a5acd);
     -fx-padding: 20px;
-    -fx-font-family: "Yu Gothic Medium";
+    -fx-font-family: "EkMukta-Light";
+}
+
+@font-face {
+    font-family: 'EkMukta Light';
+    src: url('EkMukta-Light.ttf');
 }
 
 .button{

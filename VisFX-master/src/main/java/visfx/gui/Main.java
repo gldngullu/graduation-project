@@ -5,6 +5,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import findCall.ListingAllMethods;
 import findCall.MethodCallInformation;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
@@ -23,6 +24,7 @@ import visfx.examples.CreateGraph;
 import visfx.graph.VisGraph;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -38,12 +40,14 @@ public class Main extends Application {
     private VisGraph graph;
     private ListingAllMethods listingAllMethods = new ListingAllMethods();
     private CreateGraph createGraph = new CreateGraph();
-    private LinkedHashMap<String, String> filePathStringMap = new LinkedHashMap<>(); //<FileName, FilePath>
-    private ArrayList<MethodCallInformation> currentProjectMethods = new ArrayList<>();
+    private LinkedHashMap<String, String> filePathStringMap; //<FilePath, FileName>
+    private ArrayList<MethodCallInformation> currentProjectMethods;
     private TabPane sourceCodeTabs = new TabPane();
     private File projectFile;
     private Button createGraphForFile;
     private Button createGraphForProject;
+    private ListView directoriesList;
+    private Label mayTakeLong;
 
     @Override
     public void start(Stage primaryStage){
@@ -70,9 +74,14 @@ public class Main extends Application {
         rightHalfPane.getChildren().add(settingLine1);
         createGraphForProject = new Button("Create graph for whole project");
         createGraphForProject.setDisable(true);
-        createGraphForProject.setOnAction(this::getMethodCallsForProject);
+        createGraphForProject.setOnAction(event -> {
+            mayTakeLong.setText("This process may take long, pleasea ");
+            getMethodCallsForProject(event);
+        });
+        mayTakeLong = new Label();
         CheckBox seeConnectedMethods = new CheckBox("See connected methods on click");
         settingLine1.setLeft(createGraphForProject);
+        settingLine1.setCenter(mayTakeLong);
         settingLine1.setRight(seeConnectedMethods);
         settingLine1.setAlignment(seeConnectedMethods, CENTER_RIGHT);
 
@@ -100,9 +109,20 @@ public class Main extends Application {
     private void handleOpenFileButtonClick(ActionEvent event) {
         DirectoryChooser fileChooser = new DirectoryChooser();
         fileChooser.setTitle("Select java project to analyze");
-        fileChooser.setInitialDirectory(new File("C:\\Users\\gldng\\IdeaProjects"));
+        //fileChooser.setInitialDirectory(new File("C:\\Users\\gldng\\IdeaProjects"));
+        fileChooser.setInitialDirectory(new File("C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master"));
         projectFile = fileChooser.showDialog(((Button)event.getSource()).getScene().getWindow());
         determineSourcePackage();
+    }
+
+    private void getListOfFiles(File projectFile, String indent){
+        filePathStringMap.put( projectFile.getPath(), indent + "-" + projectFile.getName());
+        if(projectFile.isDirectory()){
+            File[] allFiles = projectFile.listFiles();
+            for (File allFile : allFiles) {
+                getListOfFiles(allFile, "\t" + indent);
+            }
+        }
     }
 
     private void determineSourcePackage(){
@@ -113,8 +133,10 @@ public class Main extends Application {
         popupWindow.setTitle("Select source code directory");
         ListView filesContainer = new ListView();
         filesContainer.setPrefHeight(400);
+        filePathStringMap = new LinkedHashMap<>();
         getListOfFiles(projectFile, "");
-        filesContainer.getItems().addAll(filePathStringMap.keySet());
+        filesContainer.getItems().addAll(filePathStringMap.values());
+        ArrayList<String> paths = new ArrayList<>(filePathStringMap.keySet());
 
         Label label = new Label("Please select the source directory for the project.\nThis file is the smallest directory which includes all the packages(if there is any) of the source codes.");
         label.setId("infoLabel");
@@ -124,13 +146,15 @@ public class Main extends Application {
         selectButton.setOnAction(e -> {
             popupWindow.close();
             try {
-                String packagePath = filePathStringMap.get(filesContainer.getSelectionModel().getSelectedItem());
+                int index = filesContainer.getSelectionModel().getSelectedIndex();
+                String packagePath = paths.get(index);
+                listingAllMethods.initializeAnalyze();
                 listingAllMethods.findJavaFiles(packagePath);
                 listingAllMethods.setPackagePath(packagePath);
                 determineLibraries();
                 printTheSourceCode();
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            } catch (NullPointerException ex) {
+                System.out.println("Did not select a project");
             }
         });
 
@@ -150,7 +174,7 @@ public class Main extends Application {
 
         popupWindow.initModality(Modality.APPLICATION_MODAL);
         popupWindow.setTitle("Select library directories");
-        ListView<String> directoriesList = new ListView();
+        directoriesList = new ListView();
         directoriesList.setPrefHeight(350);
 
         Label label = new Label("Please select the directories for libraries that are used in your project. \n" +
@@ -161,25 +185,22 @@ public class Main extends Application {
         Button selectDirectoryButton = new Button("Add library directory");
         Button doneWithDirectoriesButton = new Button("Save these libraries");
 
+        ArrayList<File> libraryDirectories = new ArrayList<>();
         ObservableList<String> observableDirectories = FXCollections.observableArrayList();
 
-        ArrayList<File> libraryDirectories = new ArrayList<>();
-        directoriesList.setItems(observableDirectories);
-
-        // TODO Listview do not update
-
         selectDirectoryButton.setOnAction(e -> {
-            DirectoryChooser fileChooser = new DirectoryChooser();
-            fileChooser.setTitle("Select library directory");
-            fileChooser.setInitialDirectory(new File("C:\\"));
-            File file = fileChooser.showDialog(((Button)e.getSource()).getScene().getWindow());
-            libraryDirectories.add(file);
-            observableDirectories.add("Directory name: " + file.getName() + "- Path: " +file.getPath());
-            directoriesList.getItems().clear();
-            directoriesList.setItems(observableDirectories);
+            try {
+                DirectoryChooser fileChooser = new DirectoryChooser();
+                fileChooser.setTitle("Select library directory");
+                fileChooser.setInitialDirectory(new File("C:\\"));
+                File file = fileChooser.showDialog(((Button) e.getSource()).getScene().getWindow());
+                libraryDirectories.add(file);
+                observableDirectories.add("Directory name: " + file.getName() + "- Path: " + file.getPath());
+                directoriesList.setItems(observableDirectories);
+            }catch (NullPointerException ex){
+                System.out.println("Did not choose a directory");
+            }
         });
-
-
 
         doneWithDirectoriesButton.setOnAction(event -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do you confirm the selected directories?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
@@ -197,9 +218,11 @@ public class Main extends Application {
         layout.getChildren().addAll(label, directoriesList, selectDirectoryButton, doneWithDirectoriesButton);
         Scene scene1= new Scene(layout, 500, 600);
         scene1.getStylesheets().add("mainStylesheet.css");
-        popupWindow.setScene(scene1);
-        popupWindow.setResizable(false);
-        popupWindow.showAndWait();
+        Platform.runLater(() -> {
+            popupWindow.setScene(scene1);
+            popupWindow.setResizable(false);
+            popupWindow.showAndWait();
+        });
     }
 
     private void printTheSourceCode(){
@@ -223,28 +246,25 @@ public class Main extends Application {
         createGraphForFile.setDisable(false);
     }
 
-    private void getListOfFiles(File projectFile, String indent){
-        filePathStringMap.put( indent + "-" + projectFile.getName(), projectFile.getPath());
-        if(projectFile.isDirectory()){
-            File[] allFiles = projectFile.listFiles();
-            for (File allFile : allFiles) {
-                getListOfFiles(allFile, "\t" + indent);
-            }
-        }
-    }
 
-    private void getMethodCallsForProject(ActionEvent event){
-        currentProjectMethods = listingAllMethods.findMethodCalls();
-        graph = createGraph.buildGraph(currentProjectMethods);
-        buildGraph();
+    private void getMethodCallsForProject(ActionEvent e){
+        Thread thread = new Thread(() -> {
+            currentProjectMethods = listingAllMethods.findMethodCalls();
+            graph = createGraph.buildGraph(currentProjectMethods);
+            buildGraph();
+        });
+        thread.start();
     }
 
     private void buildGraph(){
-        webEngine.load((getClass().getClassLoader().getResource("baseGraph.html")).toString());
-        String script = "setTheData(" + graph.getNodesJson() +  "," + graph.getEdgesJson() + ")";
-        webEngine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue == Worker.State.SUCCEEDED)
-                webEngine.executeScript(script);
+        Platform.runLater(() -> {
+            mayTakeLong.setText("");
+            webEngine.load((getClass().getClassLoader().getResource("baseGraph.html")).toString());
+            String script = "setTheData(" + graph.getNodesJson() +  "," + graph.getEdgesJson() + ")";
+            webEngine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue == Worker.State.SUCCEEDED)
+                    webEngine.executeScript(script);
+            });
         });
     }
 

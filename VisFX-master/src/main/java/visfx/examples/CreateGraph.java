@@ -19,6 +19,9 @@ public class CreateGraph {
     private HashMap<BigInteger, VisNode> nodesOfGraph;
     private HashMap<BigInteger, VisEdge> edgesOfGraph;
     private int nodeCount;
+    private ArrayList<String> compareResolved = new ArrayList<>();
+    private ArrayList<String> compareMethod = new ArrayList<>();
+
 
 
     public VisGraph buildGraph(ArrayList<MethodCallInformation> methodCalls) {
@@ -58,15 +61,36 @@ public class CreateGraph {
     private String getParamsAsString(ResolvedMethodDeclaration methodDeclaration){
         StringBuilder parameters = new StringBuilder();
         for (int i = 0; i < methodDeclaration.getNumberOfParams(); i++) {
-            parameters.append(methodDeclaration.getParam(i).getType() + "-");
+            String param = methodDeclaration.getParam(i).describeType();
+            if(param.contains(".")) {
+                parameters.append(fixParamString(param) + "-");
+                compareResolved.add(fixParamString(param));
+            }else {
+                parameters.append(param + "-");
+                compareMethod.add(param);
+            }
         }
         return parameters.toString();
+    }
+
+    private String fixParamString(String parameter){
+        if(parameter.matches("[a-zA-Z|.]+[<][a-zA-Z|.]+[>]")){
+            String[] strings = parameter.split("<");
+            return removeDotNotation(strings[0]) + "<" + removeDotNotation(strings[1].substring(0, strings[1].length()-1));
+        }else
+            return removeDotNotation(parameter);
+    }
+
+    private String removeDotNotation(String dottedString){
+        String[] strings = dottedString.split("\\.");
+        return strings[strings.length-1];
     }
 
     private String getParamsAsString(MethodDeclaration methodDeclaration){
         StringBuilder parameters = new StringBuilder();
         for (int i = 0; i < methodDeclaration.getParameters().size(); i++) {
             parameters.append(methodDeclaration.getParameter(i).getType() + "-");
+            compareMethod.add(methodDeclaration.getParameter(i).getType().asString());
         }
         return parameters.toString();
     }
@@ -78,7 +102,6 @@ public class CreateGraph {
             return getClassAsString(method.getParentNode().get());
     }
 
-    // Square calculationların parametrelerine bak
     private BigInteger addNewNode(String nodeLabel, String stringNodeKey){
         BigInteger tempKey = new BigInteger((stringNodeKey).getBytes());
         if(!nodesOfGraph.containsKey(tempKey)) {

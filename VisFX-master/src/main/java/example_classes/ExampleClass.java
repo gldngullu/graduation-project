@@ -1,7 +1,5 @@
 package example_classes;
 
-import java.util.ArrayList;
-
 public class ExampleClass {
 
     private static int i = Math.abs(25);
@@ -11,13 +9,13 @@ public class ExampleClass {
         ChildExampleClass ch = new ChildExampleClass();
         e = ch;
         System.out.println(e.toString());
-        ArrayList<String> list = new ArrayList();
+        String[] list = {"Bu","Şu","O"};
         ridiculousFunction(list);
         System.out.println("Ridiculous sum result:" + squareCalculation(i) + 5);
 
     }
 
-    public static int ridiculousFunction(ArrayList<String> list){
+    public static int ridiculousFunction(String[] list){
         for (int j = 0; j < 3; j++) {
             squareCalculation(i);
         }

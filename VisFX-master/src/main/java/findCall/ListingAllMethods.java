@@ -22,25 +22,32 @@ import java.util.Locale;
 public class ListingAllMethods {
 
     private static String packagePath;
-    private ArrayList<MethodCallInformation> allMethodCallsInProject = new ArrayList<>();
-    private ArrayList<CompilationUnit> parsedClasses = new ArrayList<>();
+    private ArrayList<MethodCallInformation> allMethodCallsInProject;
+    private ArrayList<CompilationUnit> parsedClasses;
     private JavaParserFacade javaParserFacade;
-    private ArrayList<String> jarFiles = new ArrayList<>();
-    private static int numberOfResolveErrors = 0;
+    private ArrayList<String> jarFiles;
+    private int numberOfResolveErrors;
 
     public static void main(String[] args) throws Exception {
         Locale.setDefault(Locale.forLanguageTag("en"));
-        packagePath = "C:\\Users\\gldng\\IdeaProjects\\button\\src";
+        //packagePath = "C:\\Users\\gldng\\IdeaProjects\\button\\src";
+        packagePath = "C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java";
         ListingAllMethods exClass = new ListingAllMethods();
         exClass.findJavaFiles(packagePath);
         exClass.findJarFilesInDirectory("C:\\Program Files\\Java");
-        //exClass.findJarFilesInDirectory("C:\\Users\\gldng\\.m2\\repository");
+        exClass.findJarFilesInDirectory("C:\\Users\\gldng\\.m2\\repository");
         exClass.findMethodCalls();
-        System.out.println("Unsolved methods:" + numberOfResolveErrors);
+    }
+
+    public void initializeAnalyze(){
+        parsedClasses = new ArrayList<>();
+        jarFiles = new ArrayList<>();
     }
 
     public ArrayList<MethodCallInformation> findMethodCalls(){
 
+        allMethodCallsInProject = new ArrayList<>();
+        numberOfResolveErrors = 0;
         MethodCallFinder methodCallFinder = new MethodCallFinder();
 
         setTypeSolver();
@@ -48,6 +55,7 @@ public class ListingAllMethods {
         for (CompilationUnit parsedClass : parsedClasses) {
             methodCallFinder.visit(parsedClass, null);
         }
+        System.out.println("Unsolved methods:" + numberOfResolveErrors);
         return allMethodCallsInProject;
     }
 
@@ -75,7 +83,8 @@ public class ListingAllMethods {
             System.out.println("Oops");
         }
         combinedTypeSolver.add(new ReflectionTypeSolver());
-        combinedTypeSolver.add(new JavaParserTypeSolver(packagePath));
+        //combinedTypeSolver.add(new JavaParserTypeSolver(packagePath));
+        combinedTypeSolver.add(new JavaParserTypeSolver(new File("C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java")));
         javaParserFacade = JavaParserFacade.get(combinedTypeSolver);
     }
 
@@ -114,8 +123,6 @@ public class ListingAllMethods {
                 System.out.println("Unsolved: " + methodCallExpr.toString());
                 numberOfResolveErrors++;
             }catch (RuntimeException ex) {
-                if(numberOfResolveErrors == 1)
-                    ex.printStackTrace();
                 System.out.println("Runtime: " + methodCallExpr.toString());
                 numberOfResolveErrors++;
             }
