@@ -1,14 +1,17 @@
 package visfx.examples;
 
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import findCall.MethodCallInformation;
 import visfx.graph.VisEdge;
 import visfx.graph.VisGraph;
 import visfx.graph.VisNode;
 
+import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +27,7 @@ public class CreateGraph {
 
 
 
-    public VisGraph buildGraph(ArrayList<MethodCallInformation> methodCalls) {
+    public VisGraph buildGraph(ArrayList<MethodCallInformation> methodCalls, ArrayList<String> projectClasses){
         VisGraph graph = new VisGraph();
         nodesOfGraph = new HashMap<>();
         edgesOfGraph = new HashMap<>();
@@ -45,9 +48,12 @@ public class CreateGraph {
             String targetNodeLabel = targetMethod.getClassName() + "\n" + targetMethod.getName();
             String targetNodeKeyString = targetNodeLabel + getParamsAsString(targetMethod);
 
-            BigInteger sourceNodeKey = addNewNode(sourceNodeLabel + "()", sourceNodeKeyString);
-            BigInteger targetNodeKey = addNewNode(targetNodeLabel + "()", targetNodeKeyString);
-
+            BigInteger sourceNodeKey = addNewNode(sourceNodeLabel + "()", sourceNodeKeyString, false);
+            BigInteger targetNodeKey;
+            if(projectClasses.contains(targetMethod.getPackageName()+ "." + targetMethod.getClassName()))
+                targetNodeKey = addNewNode(targetNodeLabel + "()", targetNodeKeyString, false);
+            else
+                targetNodeKey = addNewNode(targetNodeLabel + "()", targetNodeKeyString, true);
             String edgeKeyString = sourceNodeKeyString + " to " + targetNodeKeyString;
             BigInteger edgeKey = addNewEdge(edgeKeyString, sourceNodeKey, targetNodeKey);
 
@@ -102,10 +108,14 @@ public class CreateGraph {
             return getClassAsString(method.getParentNode().get());
     }
 
-    private BigInteger addNewNode(String nodeLabel, String stringNodeKey){
+    private BigInteger addNewNode(String nodeLabel, String stringNodeKey, Boolean isExternalMethod){
         BigInteger tempKey = new BigInteger((stringNodeKey).getBytes());
         if(!nodesOfGraph.containsKey(tempKey)) {
-            VisNode node = new VisNode(nodeCount++, nodeLabel);
+            VisNode node;
+            if(isExternalMethod)
+                node = new VisNode(nodeCount++, nodeLabel, "LibMethod");
+            else
+                node = new VisNode(nodeCount++, nodeLabel, "ProjectMethod");
             nodesOfGraph.put(tempKey, node);
         }
         return tempKey;

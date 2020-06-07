@@ -2,7 +2,7 @@ package visfx.gui;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import findCall.ListingAllMethods;
+import findCall.AnalyzeProject;
 import findCall.MethodCallInformation;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -11,7 +11,6 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -24,11 +23,9 @@ import visfx.examples.CreateGraph;
 import visfx.graph.VisGraph;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Locale;
-import java.util.Observable;
 
 import static javafx.geometry.Pos.*;
 
@@ -38,7 +35,7 @@ public class Main extends Application {
     private final WebEngine webEngine = webView.getEngine();
 
     private VisGraph graph;
-    private ListingAllMethods listingAllMethods = new ListingAllMethods();
+    private AnalyzeProject analyzeProject = new AnalyzeProject();
     private CreateGraph createGraph = new CreateGraph();
     private LinkedHashMap<String, String> filePathStringMap; //<FilePath, FileName>
     private ArrayList<MethodCallInformation> currentProjectMethods;
@@ -109,8 +106,8 @@ public class Main extends Application {
     private void handleOpenFileButtonClick(ActionEvent event) {
         DirectoryChooser fileChooser = new DirectoryChooser();
         fileChooser.setTitle("Select java project to analyze");
-        //fileChooser.setInitialDirectory(new File("C:\\Users\\gldng\\IdeaProjects"));
-        fileChooser.setInitialDirectory(new File("C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master"));
+        fileChooser.setInitialDirectory(new File("C:\\Users\\gldng\\IdeaProjects"));
+        //fileChooser.setInitialDirectory(new File("C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master"));
         projectFile = fileChooser.showDialog(((Button)event.getSource()).getScene().getWindow());
         determineSourcePackage();
     }
@@ -148,9 +145,9 @@ public class Main extends Application {
             try {
                 int index = filesContainer.getSelectionModel().getSelectedIndex();
                 String packagePath = paths.get(index);
-                listingAllMethods.initializeAnalyze();
-                listingAllMethods.findJavaFiles(packagePath);
-                listingAllMethods.setPackagePath(packagePath);
+                analyzeProject.initializeAnalyze();
+                analyzeProject.findJavaFiles(packagePath);
+                analyzeProject.setPackagePath(packagePath);
                 determineLibraries();
                 printTheSourceCode();
             } catch (NullPointerException ex) {
@@ -208,7 +205,11 @@ public class Main extends Application {
             if (alert.getResult() == ButtonType.YES) {
                 popupWindow.close();
                 for (File file : libraryDirectories) {
-                    listingAllMethods.findJarFilesInDirectory(file.getPath());
+                    try {
+                        analyzeProject.findJarFilesInDirectory(file.getPath());
+                    }catch (NullPointerException ex){
+                        System.out.println("Did not choose a directory");
+                    }
                 }
             }
         });
@@ -226,7 +227,7 @@ public class Main extends Application {
     }
 
     private void printTheSourceCode(){
-        ArrayList<CompilationUnit> classes = listingAllMethods.getParsedClasses();
+        ArrayList<CompilationUnit> classes = analyzeProject.getParsedClasses();
         sourceCodeTabs.getTabs().clear();
         for (CompilationUnit tempClass : classes){
             String className = "";
@@ -249,8 +250,8 @@ public class Main extends Application {
 
     private void getMethodCallsForProject(ActionEvent e){
         Thread thread = new Thread(() -> {
-            currentProjectMethods = listingAllMethods.findMethodCalls();
-            graph = createGraph.buildGraph(currentProjectMethods);
+            currentProjectMethods = analyzeProject.findMethodCalls();
+            graph = createGraph.buildGraph(currentProjectMethods, analyzeProject.getQualifiedClassNames());
             buildGraph();
         });
         thread.start();

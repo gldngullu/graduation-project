@@ -82,17 +82,23 @@
         nodes: nodes,
         edges: edges
     };
-
+/*
     var options = {
+        groups: {
+            LibMethod:
+                {color:{background:"#dcc3ff"}, borderWidth:1},
+            ProjectMethod:
+                {color:{background:"#ffa87f"}, borderWidth:1}
+        },
         interaction: {
             navigationButtons: true,
             keyboard: true
         },
         nodes:{
             color:{
-                background:"#dcc3ff",
-                border:"#3a316e",
-                highlight:"#ffa87f",
+                //background:"#dcc3ff",
+                //border:"#3a316e",
+                //highlight:"#ffa87f"
             },
             margin:10
         },
@@ -117,31 +123,47 @@
             }
         }
     };
-    /*
+    */
 
-  var options = {
-    edges: {
+
+    var options = {
+        groups: {
+            LibMethod:
+                {color:{background:"#dcc3ff"}, borderWidth:1},
+            ProjectMethod:
+                {color:{background:"#ffa87f"}, borderWidth:1}
+        },
+        interaction: {
+            navigationButtons: true,
+            keyboard: true
+        },
+        nodes:{
+            color:{
+                background:"#dcc3ff",
+                border:"#3a316e",
+                highlight:"#ffa87f"
+            },
+            margin:20
+        },
+        edges: {
             smooth: {
                 type: 'diagonalCross',
-                "roundness": 0.3
+                "roundness": 0.2
             }
         },
-        physics: {
-            hierarchicalRepulsion: {
-                nodeDistance: 200
-            }
-        },
-    layout:{
-      randomSeed:3,
-       hierarchical: {
+        physics: false,
+        layout: {
+            hierarchical: {
                 enabled: true,
-                nodeSpacing: 50,
-                treeSpacing: 100,
-                parentCentralization: true
+                nodeSpacing: 250,
+                blockShifting: false,
+                edgeMinimization: false,
+                sortMethod: "directed"
             }
-    }
-  };
-     */
+        }
+    };
+
+
 
     var network = new vis.Network(container, data, options);
 

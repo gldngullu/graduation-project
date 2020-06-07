@@ -3,9 +3,11 @@ package findCall;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
@@ -19,7 +21,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class ListingAllMethods {
+public class AnalyzeProject {
 
     private static String packagePath;
     private ArrayList<MethodCallInformation> allMethodCallsInProject;
@@ -27,12 +29,14 @@ public class ListingAllMethods {
     private JavaParserFacade javaParserFacade;
     private ArrayList<String> jarFiles;
     private int numberOfResolveErrors;
+    private ArrayList<String> qualifiedClassNames;
 
     public static void main(String[] args) throws Exception {
         Locale.setDefault(Locale.forLanguageTag("en"));
         //packagePath = "C:\\Users\\gldng\\IdeaProjects\\button\\src";
         packagePath = "C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java";
-        ListingAllMethods exClass = new ListingAllMethods();
+        AnalyzeProject exClass = new AnalyzeProject();
+        exClass.initializeAnalyze();
         exClass.findJavaFiles(packagePath);
         exClass.findJarFilesInDirectory("C:\\Program Files\\Java");
         exClass.findJarFilesInDirectory("C:\\Users\\gldng\\.m2\\repository");
@@ -42,6 +46,7 @@ public class ListingAllMethods {
     public void initializeAnalyze(){
         parsedClasses = new ArrayList<>();
         jarFiles = new ArrayList<>();
+        qualifiedClassNames = new ArrayList<>();
     }
 
     public ArrayList<MethodCallInformation> findMethodCalls(){
@@ -53,6 +58,7 @@ public class ListingAllMethods {
         setTypeSolver();
 
         for (CompilationUnit parsedClass : parsedClasses) {
+            qualifiedClassNames.add(getClassAsString(parsedClass));
             methodCallFinder.visit(parsedClass, null);
         }
         System.out.println("Unsolved methods:" + numberOfResolveErrors);
@@ -75,6 +81,9 @@ public class ListingAllMethods {
 
     private void setTypeSolver(){
         CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
+        combinedTypeSolver.add(new ReflectionTypeSolver());
+        //combinedTypeSolver.add(new JavaParserTypeSolver(new File("C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java")));
+        combinedTypeSolver.add(new JavaParserTypeSolver(packagePath));
         try {
             for (String path : jarFiles) {
                 combinedTypeSolver.add(new JarTypeSolver(path));
@@ -82,9 +91,6 @@ public class ListingAllMethods {
         } catch (Exception io){
             System.out.println("Oops");
         }
-        combinedTypeSolver.add(new ReflectionTypeSolver());
-        //combinedTypeSolver.add(new JavaParserTypeSolver(packagePath));
-        combinedTypeSolver.add(new JavaParserTypeSolver(new File("C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java")));
         javaParserFacade = JavaParserFacade.get(combinedTypeSolver);
     }
 
@@ -104,6 +110,17 @@ public class ListingAllMethods {
         }catch (Exception ex){
             System.out.println("Error finding source code files");
         }
+    }
+
+    private String getClassAsString(CompilationUnit compilationUnit){
+        String className = "";
+        for (Node childNode : compilationUnit.getChildNodes()) {
+            if(childNode instanceof PackageDeclaration)
+                className += ((PackageDeclaration)childNode).getNameAsString() + ".";
+            if(childNode instanceof ClassOrInterfaceDeclaration)
+                className += ((ClassOrInterfaceDeclaration)childNode).getNameAsString();
+        }
+        return className;
     }
 
     private class MethodCallFinder extends VoidVisitorAdapter<Void> {
@@ -144,6 +161,10 @@ public class ListingAllMethods {
     }
 
     public static void setPackagePath(String packagePath) {
-        ListingAllMethods.packagePath = packagePath;
+        AnalyzeProject.packagePath = packagePath;
+    }
+
+    public ArrayList<String> getQualifiedClassNames() {
+        return qualifiedClassNames;
     }
 }
