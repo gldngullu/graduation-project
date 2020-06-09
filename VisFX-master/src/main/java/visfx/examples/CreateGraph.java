@@ -1,22 +1,17 @@
 package visfx.examples;
 
-import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import findCall.MethodCallInformation;
 import visfx.graph.VisEdge;
 import visfx.graph.VisGraph;
 import visfx.graph.VisNode;
 
-import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-//TODO: Duplicate nodes exist, check them
 
 public class CreateGraph {
     private HashMap<BigInteger, VisNode> nodesOfGraph;

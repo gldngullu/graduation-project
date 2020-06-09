@@ -6,6 +6,8 @@ import findCall.AnalyzeProject;
 import findCall.MethodCallInformation;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
@@ -45,6 +47,8 @@ public class Main extends Application {
     private Button createGraphForProject;
     private ListView directoriesList;
     private Label mayTakeLong;
+    private TextField searchBox;
+    private Button searchButton;
 
     @Override
     public void start(Stage primaryStage){
@@ -87,14 +91,26 @@ public class Main extends Application {
         createGraphForFile = new Button("Create graph for current class ");
         createGraphForFile.setOnAction(this::getMethodCallsForProject);
         createGraphForFile.setDisable(true);
-        TextField searchBox = new TextField();
+        searchBox = new TextField();
+        searchBox.setPromptText("Search nodes here!");
+        searchBox.setDisable(true);
         settingLine2.setLeft(createGraphForFile);
-        settingLine2.setRight(searchBox);
-        settingLine2.setAlignment(searchBox, CENTER_RIGHT);
+        searchButton = new Button("Go!");
+        searchButton.setDisable(true);
+        HBox searchUnit = new HBox(searchBox, searchButton);
+        settingLine2.setRight(searchUnit);
+        settingLine2.setAlignment(searchUnit, CENTER_RIGHT);
+
+        searchButton.setOnAction(event -> {
+            if(searchBox.getText().length() > 0) search(searchBox.getText());
+        });
 
         rightHalfPane.getChildren().add(webView);
 
         Scene scene = new Scene(root,1280, 720);
+        scene.widthProperty().addListener((observable, oldValue, newValue) -> {
+            sourceCodeTabs.setPrefWidth(800);
+        });
         sourceCodeTabs.setMinWidth(scene.getWidth()*(0.4));
         sourceCodeTabs.setMaxWidth(scene.getWidth()*(0.4));
         scene.getStylesheets().add("mainStylesheet.css");
@@ -247,6 +263,16 @@ public class Main extends Application {
         createGraphForFile.setDisable(false);
     }
 
+    private void clearSearchData(){
+        String script = "clearSearchData()";
+        webEngine.executeScript(script);
+    }
+
+    private void search(String searchData){
+        clearSearchData();
+        String script = "search('" + searchData + "')";
+        webEngine.executeScript(script);
+    }
 
     private void getMethodCallsForProject(ActionEvent e){
         Thread thread = new Thread(() -> {
@@ -260,6 +286,8 @@ public class Main extends Application {
     private void buildGraph(){
         Platform.runLater(() -> {
             mayTakeLong.setText("");
+            searchBox.setDisable(false);
+            searchButton.setDisable(false);
             webEngine.load((getClass().getClassLoader().getResource("baseGraph.html")).toString());
             String script = "setTheData(" + graph.getNodesJson() +  "," + graph.getEdgesJson() + ")";
             webEngine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {

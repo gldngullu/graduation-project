@@ -3,7 +3,7 @@
 <head>
     <title>Network | Basic usage</title>
 
-    <script type="text/javascript" src="graphLibraries/vis.min.js"></script>
+    <script type="text/javascript" src="graphLibraries/vis-network.min.js"></script>
     <link href="graphLibraries/vis-network.min.css" rel="stylesheet" type="text/css" />
 
     <style type="text/css">
@@ -131,41 +131,108 @@
             LibMethod:
                 {color:{background:"#dcc3ff"}, borderWidth:1},
             ProjectMethod:
-                {color:{background:"#ffa87f"}, borderWidth:1}
+                {color:{background:"#ffc1a3"}, borderWidth:1}
         },
         interaction: {
             navigationButtons: true,
             keyboard: true
         },
         nodes:{
+            shape: 'box',
             color:{
-                background:"#dcc3ff",
-                border:"#3a316e",
-                highlight:"#ffa87f"
+                border:"#302c3b",
+                highlight: "#74a4f7"
             },
             margin:20
         },
         edges: {
             smooth: {
                 type: 'diagonalCross',
-                "roundness": 0.2
+                "roundness": 0.4
             }
         },
         physics: false,
         layout: {
             hierarchical: {
                 enabled: true,
-                nodeSpacing: 250,
-                blockShifting: false,
-                edgeMinimization: false,
-                sortMethod: "directed"
+                nodeSpacing: 150,
+                treeSpacing: 100,
+                parentCentralization: true
             }
         }
     };
 
 
-
     var network = new vis.Network(container, data, options);
+
+    network.on( 'selectNode', function(properties) {
+        var connectedMethods = network.getConnectedNodes(properties.nodes[0]);
+        connectedMethods.forEach( function(nodeid){
+            var element = nodes.get(nodeid);
+            element.color = {
+                border: '#638edb',
+                background: '#c3d9ff'
+            };
+            nodes.update(element);
+        });
+        var connectedEdges = network.getConnectedEdges(properties.nodes[0]);
+        connectedEdges.forEach( function(edgeid){
+            var element = edges.get(edgeid);
+            element.color = '#638edb';
+            edges.update(element);
+        });
+    });
+
+    network.on("deselectNode", function (properties) {
+        var connectedMethods = network.getConnectedNodes(properties.previousSelection.nodes[0]);
+        connectedMethods.forEach( function(nodeid){
+            var element = nodes.get(nodeid);
+            if(element.group == "LibMethod"){
+                element.color = {
+                    border: '#302c3b',
+                    background: '#dcc3ff'
+                };
+            }else {
+                element.color = {
+                    border: '#302c3b',
+                    background: '#ffc1a3'
+                };
+            }
+            nodes.update(element);
+        });
+        var connectedEdges = network.getConnectedEdges(properties.previousSelection.nodes[0]);
+        connectedEdges.forEach( function(edgeid){
+            var element = edges.get(edgeid);
+            element.color = '#302c3b';
+            edges.update(element);
+        });
+    });
+
+    function clearSearchData(){
+        nodes.forEach( function(element){
+            if(element.group == "LibMethod"){
+                element.color = {
+                    border: '#302c3b',
+                    background: '#dcc3ff'
+                };
+            }else {
+                element.color = {
+                    border: '#302c3b',
+                    background: '#ffc1a3'
+                };
+            }
+            nodes.update(element);
+        });
+    }
+
+    function search(searchData){
+        nodes.forEach( function(node){
+           if(node.label.toLowerCase().includes(searchData.toLowerCase().trim())){
+               node.color = { background:'#a6ff9d'} ;
+               nodes.update(node);
+           }
+        });
+    }
 
     function setTheData(nodesArray,edgesArray) {
         nodes = new vis.DataSet(nodesArray);
