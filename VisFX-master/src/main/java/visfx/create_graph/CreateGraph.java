@@ -1,10 +1,12 @@
-package visfx.examples;
+package visfx.create_graph;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
-import findCall.MethodCallInformation;
+import analyze_project.MethodCallInformation;
 import visfx.graph.VisEdge;
 import visfx.graph.VisGraph;
 import visfx.graph.VisNode;
@@ -19,6 +21,7 @@ public class CreateGraph {
     private int nodeCount;
     private ArrayList<String> compareResolved = new ArrayList<>();
     private ArrayList<String> compareMethod = new ArrayList<>();
+    private HashMap<BigInteger, String> uniqueClassChecker;
 
 
 
@@ -26,7 +29,9 @@ public class CreateGraph {
         VisGraph graph = new VisGraph();
         nodesOfGraph = new HashMap<>();
         edgesOfGraph = new HashMap<>();
+        uniqueClassChecker = new HashMap<>();
         nodeCount = 0;
+        System.out.println("Method calls: " + methodCalls.size());
 
         for (MethodCallInformation tempMethod : methodCalls) {
             Node caller = tempMethod.getParentNode();
@@ -37,6 +42,12 @@ public class CreateGraph {
                 sourceNodeKeyString = sourceNodeLabel + getParamsAsString((MethodDeclaration) caller);
             } else if (caller instanceof ClassOrInterfaceDeclaration) {
                 sourceNodeLabel = ((ClassOrInterfaceDeclaration) caller).getNameAsString();
+                sourceNodeKeyString = sourceNodeLabel;
+            }else if (caller instanceof EnumDeclaration) {
+                sourceNodeLabel = ((EnumDeclaration) caller).getNameAsString();
+                sourceNodeKeyString = sourceNodeLabel;
+            } else if(caller instanceof ConstructorDeclaration){
+                sourceNodeLabel = ((ConstructorDeclaration) caller).getNameAsString() + "\n" + ((ConstructorDeclaration) caller).getNameAsString();
                 sourceNodeKeyString = sourceNodeLabel;
             }
             ResolvedMethodDeclaration targetMethod = tempMethod.getResolvedMethod();
@@ -55,8 +66,13 @@ public class CreateGraph {
             graph.addNodes(nodesOfGraph.get(sourceNodeKey), nodesOfGraph.get(targetNodeKey));
             graph.addEdges(edgesOfGraph.get(edgeKey));
         }
-
+        System.out.println("Nodes: " + nodesOfGraph.size());
+        System.out.println("Edges: " + edgesOfGraph.size());
         return graph;
+    }
+
+    private void fixUniqueClassName(){
+
     }
 
     private String getParamsAsString(ResolvedMethodDeclaration methodDeclaration){
@@ -99,7 +115,9 @@ public class CreateGraph {
     private String getClassAsString(Node method){
         if(method.getParentNode().get() instanceof ClassOrInterfaceDeclaration)
             return ((ClassOrInterfaceDeclaration) method.getParentNode().get()).getNameAsString();
-        else
+        else if(method.getParentNode().get() instanceof EnumDeclaration){
+            return ((EnumDeclaration) method.getParentNode().get()).getNameAsString();
+        }else
             return getClassAsString(method.getParentNode().get());
     }
 

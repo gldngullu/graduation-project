@@ -1,4 +1,4 @@
-package findCall;
+package analyze_project;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.MethodCallExpr;

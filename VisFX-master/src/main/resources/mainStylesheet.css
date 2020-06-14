@@ -30,6 +30,34 @@ BorderPane {
     -fx-alignment: center-right;
 }
 
+#info-text{
+    -fx-fill: white;
+    -fx-font-size: 14;
+    -fx-background-color: rgba(255, 237, 193, 0.23);
+    -fx-background-radius: 6px;
+    -fx-border-color: #3a316e;
+    -fx-border-radius: 6px;
+    -fx-border-width: 2px;
+}
+
+#label{
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+
+#labelOnContact{
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-text-alignment: CENTER;
+    -fx-padding: 20px;
+}
+
+#simplePopup{
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-alignment: CENTER;
+}
+
 #infoLabel{
     -fx-text-fill: white;
     -fx-font-size: 14px;
@@ -123,10 +151,6 @@ BorderPane {
     -fx-background-color: #6a5acd;
 }
 
-.scroll-pane > .corner {
-    -fx-background-color: #191A19 ;
-}
-
 .web-view {
     -fx-background-radius: 12px;
     -fx-border-radius: 12px;
@@ -155,16 +179,10 @@ BorderPane {
     -fx-background-color: white;
 }
 
-::-webkit-scrollbar {
-    width: 12px;
+.scroll-pane > .corner {
+    -fx-background-color: #dcc3ff;
 }
 
-::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+.scroll-pane {
+    -fx-background-color: blue;
 }

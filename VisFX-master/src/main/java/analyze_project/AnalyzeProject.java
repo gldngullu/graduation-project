@@ -1,13 +1,14 @@
-package findCall;
+package analyze_project;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
-import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
@@ -18,8 +19,10 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeS
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 
 public class AnalyzeProject {
 
@@ -28,13 +31,14 @@ public class AnalyzeProject {
     private ArrayList<CompilationUnit> parsedClasses;
     private JavaParserFacade javaParserFacade;
     private ArrayList<String> jarFiles;
-    private int numberOfResolveErrors;
+    private ArrayList<String> unsolvedMethods;
     private ArrayList<String> qualifiedClassNames;
 
     public static void main(String[] args) throws Exception {
         Locale.setDefault(Locale.forLanguageTag("en"));
         //packagePath = "C:\\Users\\gldng\\IdeaProjects\\button\\src";
-        packagePath = "C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java";
+        //packagePath = "C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java";
+        packagePath = "C:\\Users\\gldng\\Desktop\\Graduation Project\\javaparser-master\\javaparser-core\\src\\main\\java";
         AnalyzeProject exClass = new AnalyzeProject();
         exClass.initializeAnalyze();
         exClass.findJavaFiles(packagePath);
@@ -52,7 +56,7 @@ public class AnalyzeProject {
     public ArrayList<MethodCallInformation> findMethodCalls(){
 
         allMethodCallsInProject = new ArrayList<>();
-        numberOfResolveErrors = 0;
+        unsolvedMethods = new ArrayList<>();
         MethodCallFinder methodCallFinder = new MethodCallFinder();
 
         setTypeSolver();
@@ -61,7 +65,7 @@ public class AnalyzeProject {
             qualifiedClassNames.add(getClassAsString(parsedClass));
             methodCallFinder.visit(parsedClass, null);
         }
-        System.out.println("Unsolved methods:" + numberOfResolveErrors);
+        System.out.println("Unsolved methods:" + unsolvedMethods.size());
         return allMethodCallsInProject;
     }
 
@@ -94,9 +98,8 @@ public class AnalyzeProject {
         javaParserFacade = JavaParserFacade.get(combinedTypeSolver);
     }
 
-    public void findJavaFiles(String filePath){
+    public void findJavaFiles(String filePath) throws Exception {
         File directory = new File(filePath);
-        try {
             File[] allFilesInDirectory = directory.listFiles();
             for (File file : allFilesInDirectory) {
                 if (file.getName().endsWith(".java")){
@@ -107,9 +110,6 @@ public class AnalyzeProject {
                     findJavaFiles(file.getPath());
                 }
             }
-        }catch (Exception ex){
-            System.out.println("Error finding source code files");
-        }
     }
 
     private String getClassAsString(CompilationUnit compilationUnit){
@@ -134,24 +134,25 @@ public class AnalyzeProject {
                 allMethodCallsInProject.add(
                         new MethodCallInformation(methodCallExpr, resolvedMethod, caller, methodCallExpr.getRange().get().begin.line));
             }catch (UnsupportedOperationException ex){
-                System.out.println("Unsupported: " + methodCallExpr.toString());
-                numberOfResolveErrors++;
+                unsolvedMethods.add("Unsupported: " + methodCallExpr.toString());
             }catch (UnsolvedSymbolException ex) {
-                System.out.println("Unsolved: " + methodCallExpr.toString());
-                numberOfResolveErrors++;
+                unsolvedMethods.add("Unsolved: " + methodCallExpr.toString());
             }catch (RuntimeException ex) {
-                System.out.println("Runtime: " + methodCallExpr.toString());
-                numberOfResolveErrors++;
+                unsolvedMethods.add("Runtime: " + methodCallExpr.toString());
             }
         }
     }
 
     private Node getCallerOfMethodCall(MethodCallExpr methodCall){
         Node caller =  methodCall.getParentNode().get();
-        while(!(caller instanceof MethodDeclaration)){
-            if(caller instanceof ClassOrInterfaceDeclaration)
+        while(!((caller instanceof MethodDeclaration) || (caller instanceof ConstructorDeclaration))){
+            if(caller instanceof ClassOrInterfaceDeclaration || caller instanceof EnumDeclaration)
                 return caller;
-            caller = caller.getParentNode().get();
+            try {
+                caller = caller.getParentNode().get();
+            }catch (NoSuchElementException ex){
+                ex.printStackTrace();
+            }
         }
         return caller;
     }
