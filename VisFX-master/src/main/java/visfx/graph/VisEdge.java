@@ -16,9 +16,9 @@ public class VisEdge {
         this.label = label;
     }
 
-    public String toJson(){
+    public String toJson() {
         GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(VisEdge.class,new VisEdgeAdapter());
+        gsonBuilder.registerTypeAdapter(VisEdge.class, new VisEdgeAdapter());
         return gsonBuilder.create().toJson(this);
     }
 

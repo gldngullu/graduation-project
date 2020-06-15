@@ -82,49 +82,6 @@
         nodes: nodes,
         edges: edges
     };
-/*
-    var options = {
-        groups: {
-            LibMethod:
-                {color:{background:"#dcc3ff"}, borderWidth:1},
-            ProjectMethod:
-                {color:{background:"#ffa87f"}, borderWidth:1}
-        },
-        interaction: {
-            navigationButtons: true,
-            keyboard: true
-        },
-        nodes:{
-            color:{
-                //background:"#dcc3ff",
-                //border:"#3a316e",
-                //highlight:"#ffa87f"
-            },
-            margin:10
-        },
-        edges: {
-            smooth: {
-                type: 'diagonalCross',
-                "roundness": 0.3
-            }
-        },
-        physics: {
-            hierarchicalRepulsion: {
-                nodeDistance: 200
-            }
-        },
-        layout: {
-            randomSeed: 2,
-            hierarchical: {
-                enabled: true,
-                nodeSpacing: 50,
-                treeSpacing: 100,
-                parentCentralization: true
-            }
-        }
-    };
-    */
-
 
     var options = {
         groups: {
@@ -239,7 +196,6 @@
         edges = new vis.DataSet(edgesArray);
         network.setData({nodes:nodes, edges:edges});
         network.setOptions({nodes:{shape:'box'}});
-        //network.setOptions({nodes:{shadow:true},edges:{shadow:true}});
     }
 </script>
 

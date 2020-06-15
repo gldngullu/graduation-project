@@ -6,7 +6,7 @@ import visfx.graph.VisEdge;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-public class VisEdgeAdapter implements JsonSerializer<VisEdge>{
+public class VisEdgeAdapter implements JsonSerializer<VisEdge> {
 
     @Override
     public JsonElement serialize(VisEdge visEdge, Type type, JsonSerializationContext jsonSerializationContext) {
@@ -14,20 +14,20 @@ public class VisEdgeAdapter implements JsonSerializer<VisEdge>{
 
     }
 
-    public static JsonArray getAsJsonArray(ArrayList<VisEdge> edges){
+    public static JsonArray getAsJsonArray(ArrayList<VisEdge> edges) {
         JsonArray jsonArray = new JsonArray();
-        for(VisEdge visEdge : edges){
+        for (VisEdge visEdge : edges) {
             jsonArray.add(getAsJsonObject(visEdge));
         }
         return jsonArray;
     }
 
-    private static JsonObject getAsJsonObject(VisEdge visEdge){
+    private static JsonObject getAsJsonObject(VisEdge visEdge) {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("from",visEdge.getFrom().getId());
-        jsonObject.addProperty("to",visEdge.getTo().getId());
-        jsonObject.addProperty("label",visEdge.getLabel());
-        jsonObject.addProperty("arrows",visEdge.getArrows());
+        jsonObject.addProperty("from", visEdge.getFrom().getId());
+        jsonObject.addProperty("to", visEdge.getTo().getId());
+        jsonObject.addProperty("label", visEdge.getLabel());
+        jsonObject.addProperty("arrows", visEdge.getArrows());
         return jsonObject;
     }
 }

@@ -11,19 +11,11 @@ public class MethodCallInformation {
     private int methodCallLineNumber;
 
     public MethodCallInformation(
-            MethodCallExpr methodCall, ResolvedMethodDeclaration resolvedMethod, Node parentNode, int methodCallLineNumber){
+            MethodCallExpr methodCall, ResolvedMethodDeclaration resolvedMethod, Node parentNode, int methodCallLineNumber) {
         this.methodCall = methodCall;
         this.methodCallLineNumber = methodCallLineNumber;
         this.parentNode = parentNode;
         this.resolvedMethod = resolvedMethod;
-    }
-
-    public MethodCallExpr getMethodCall() {
-        return methodCall;
-    }
-
-    public int getMethodCallLineNumber() {
-        return methodCallLineNumber;
     }
 
     public Node getParentNode() {

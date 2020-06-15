@@ -1,9 +1,9 @@
 package gui;
 
-import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import analyze_project.AnalyzeProject;
 import analyze_project.MethodCallInformation;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -13,11 +13,15 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.text.Text;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javafx.stage.*;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import netscape.javascript.JSException;
 import visfx.create_graph.CreateGraph;
 import visfx.graph.VisGraph;
@@ -29,14 +33,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Locale;
-import java.util.Optional;
 
 import static javafx.geometry.Pos.*;
 
 public class Main extends Application {
 
-    private final WebView webView = new WebView();
-    private final WebEngine webEngine = webView.getEngine();
+    private WebView webView = new WebView();
+    private WebEngine webEngine = webView.getEngine();
 
     private VisGraph graph;
     private AnalyzeProject analyzeProject = new AnalyzeProject();
@@ -57,7 +60,7 @@ public class Main extends Application {
     private long startTime;
 
     @Override
-    public void start(Stage primaryStage){
+    public void start(Stage primaryStage) {
         Locale.setDefault(Locale.forLanguageTag("en"));
         VBox root = new VBox();
 
@@ -113,24 +116,24 @@ public class Main extends Application {
         settingLine2.setAlignment(searchUnit, CENTER_RIGHT);
 
         searchButton.setOnAction(event -> {
-            if(searchBox.getText().length() > 0) search(searchBox.getText());
+            if (searchBox.getText().length() > 0) search(searchBox.getText());
         });
 
         rightHalfPane.getChildren().add(webView);
 
-        Scene scene = new Scene(root,1280, 720);
+        Scene scene = new Scene(root, 1280, 720);
         scene.widthProperty().addListener((observable, oldValue, newValue) -> {
             sourceCodeTabs.setPrefWidth(800);
         });
-        sourceCodeTabs.setMinWidth(scene.getWidth()*(0.4));
-        sourceCodeTabs.setMaxWidth(scene.getWidth()*(0.4));
+        sourceCodeTabs.setMinWidth(scene.getWidth() * (0.4));
+        sourceCodeTabs.setMaxWidth(scene.getWidth() * (0.4));
         scene.getStylesheets().add("mainStylesheet.css");
         primaryStage.setScene(scene);
         primaryStage.setTitle("Best java static call graph generator ever!");
         primaryStage.show();
     }
 
-    public void contactPopup(ActionEvent event){
+    public void contactPopup(ActionEvent event) {
         Stage popup = new Stage();
         popup.initModality(Modality.APPLICATION_MODAL);
         popup.setTitle("Contact");
@@ -144,7 +147,7 @@ public class Main extends Application {
         closeButton.setOnAction(e -> popup.close());
         VBox layout = new VBox(label, closeButton);
         layout.setId("simplePopup");
-        layout.setPrefSize(500,200);
+        layout.setPrefSize(500, 200);
 
         Scene scene = new Scene(layout);
         scene.getStylesheets().add("mainStylesheet.css");
@@ -170,7 +173,7 @@ public class Main extends Application {
         VBox layout = new VBox(text, closeButton);
         layout.setId("simplePopup");
         layout.setAlignment(CENTER);
-        layout.setPrefSize(500,650);
+        layout.setPrefSize(500, 650);
 
         Scene scene = new Scene(layout);
         scene.getStylesheets().add("mainStylesheet.css");
@@ -178,20 +181,22 @@ public class Main extends Application {
         popup.showAndWait();
     }
 
-    private void selectProject(ActionEvent event){
+    private void selectProject(ActionEvent event) {
         try {
             DirectoryChooser fileChooser = new DirectoryChooser();
             fileChooser.setTitle("Select java project to analyze");
             fileChooser.setInitialDirectory(new File("C:\\Users\\gldng\\IdeaProjects"));
             //fileChooser.setInitialDirectory(new File("C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master"));
-            projectFile = fileChooser.showDialog(((Button)event.getSource()).getScene().getWindow());
+            projectFile = fileChooser.showDialog(((Button) event.getSource()).getScene().getWindow());
             determineSourcePackage();
-        }catch(NullPointerException ignored){ };
+        } catch (NullPointerException ignored) {
+        }
+        ;
     }
 
-    private void getListOfFiles(File projectFile, String indent){
-        filePathStringMap.put( projectFile.getPath(), indent + "-" + projectFile.getName());
-        if(projectFile.isDirectory()){
+    private void getListOfFiles(File projectFile, String indent) {
+        filePathStringMap.put(projectFile.getPath(), indent + "-" + projectFile.getName());
+        if (projectFile.isDirectory()) {
             File[] allFiles = projectFile.listFiles();
             for (File allFile : allFiles) {
                 getListOfFiles(allFile, "\t" + indent);
@@ -199,7 +204,7 @@ public class Main extends Application {
         }
     }
 
-    private void determineSourcePackage(){
+    private void determineSourcePackage() {
 
         Stage popupWindow = new Stage();
 
@@ -238,23 +243,23 @@ public class Main extends Application {
             }
         });
 
-        VBox layout= new VBox(10);
+        VBox layout = new VBox(10);
         layout.setId("popupWindow");
         layout.getChildren().addAll(label, filesContainer, selectButton);
-        Scene scene1= new Scene(layout, 400, 600);
+        Scene scene1 = new Scene(layout, 400, 600);
         scene1.getStylesheets().add("mainStylesheet.css");
         popupWindow.setScene(scene1);
         popupWindow.setResizable(false);
         popupWindow.showAndWait();
     }
 
-    private void clearLibraries(){
+    private void clearLibraries() {
         directoriesList = new ListView();
         libraryDirectories = new ArrayList<>();
         observableDirectories = FXCollections.observableArrayList();
     }
 
-    private void determineLibraries(){
+    private void determineLibraries() {
         Stage popupWindow = new Stage();
 
         popupWindow.initModality(Modality.APPLICATION_MODAL);
@@ -278,7 +283,7 @@ public class Main extends Application {
                 libraryDirectories.add(file);
                 observableDirectories.add("Directory name: " + file.getName() + "- Path: " + file.getPath());
                 directoriesList.setItems(observableDirectories);
-            }catch (NullPointerException ex){
+            } catch (NullPointerException ex) {
                 System.out.println("Did not choose a directory");
             }
         });
@@ -291,7 +296,7 @@ public class Main extends Application {
                 for (File file : libraryDirectories) {
                     try {
                         analyzeProject.findJarFilesInDirectory(file.getPath());
-                    }catch (NullPointerException ex){
+                    } catch (NullPointerException ex) {
                         System.out.println("Did not choose a directory");
                     }
                 }
@@ -301,7 +306,7 @@ public class Main extends Application {
         VBox layout = new VBox(10);
         layout.setId("popupWindow");
         layout.getChildren().addAll(label, directoriesList, selectDirectoryButton, doneWithDirectoriesButton);
-        Scene scene1= new Scene(layout, 500, 600);
+        Scene scene1 = new Scene(layout, 500, 600);
         scene1.getStylesheets().add("mainStylesheet.css");
         Platform.runLater(() -> {
             popupWindow.setScene(scene1);
@@ -310,13 +315,13 @@ public class Main extends Application {
         });
     }
 
-    private void printTheSourceCode(){
+    private void printTheSourceCode() {
         ArrayList<CompilationUnit> classes = analyzeProject.getParsedClasses();
         sourceCodeTabs.getTabs().clear();
-        for (CompilationUnit tempClass : classes){
+        for (CompilationUnit tempClass : classes) {
             String className = "";
-            for (int i = tempClass.getChildNodes().size()-1; i >= 0  ; i--) {
-                if(tempClass.getChildNodes().get(i) instanceof ClassOrInterfaceDeclaration) {
+            for (int i = tempClass.getChildNodes().size() - 1; i >= 0; i--) {
+                if (tempClass.getChildNodes().get(i) instanceof ClassOrInterfaceDeclaration) {
                     className = ((ClassOrInterfaceDeclaration) tempClass.getChildNodes().get(i)).getNameAsString();
                     break;
                 }
@@ -331,18 +336,18 @@ public class Main extends Application {
         addLibraryButton.setDisable(false);
     }
 
-    private void clearSearchData(){
+    private void clearSearchData() {
         String script = "clearSearchData()";
         webEngine.executeScript(script);
     }
 
-    private void search(String searchData){
+    private void search(String searchData) {
         clearSearchData();
         String script = "search('" + searchData + "')";
         webEngine.executeScript(script);
     }
 
-    private void getMethodCallsForProject(ActionEvent e){
+    private void getMethodCallsForProject(ActionEvent e) {
         startTime = System.nanoTime();
         Thread thread = new Thread(() -> {
             currentProjectMethods = analyzeProject.findMethodCalls();
@@ -352,29 +357,31 @@ public class Main extends Application {
         thread.start();
     }
 
-    private void buildGraph(){
+    private void buildGraph() {
         Platform.runLater(() -> {
             mayTakeLong.setText("");
             seeConnectedMethods.setVisible(true);
             searchBox.setDisable(false);
             searchButton.setDisable(false);
             webEngine.load((getClass().getClassLoader().getResource("baseGraph.html")).toString());
-            String script = "setTheData(" + graph.getNodesJson() +  "," + graph.getEdgesJson() + ")";
+            String script = "setTheData(" + graph.getNodesJson() + "," + graph.getEdgesJson() + ")";
             webEngine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue == Worker.State.SUCCEEDED) {
                     try {
                         webEngine.executeScript(script);
-                    }catch (JSException ex){
+                    } catch (JSException ex) {
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Could not create the graph");
                         alert.setHeaderText(null);
-                        alert.setContentText("There was an error occurred with rendering the graph:\n" + ex.getCause());
+                        alert.setContentText("There was an error occurred with rendering the graph:\n" + ex.getMessage() +
+                                "\nError is valid if only the graph is not created.");
                         alert.showAndWait();
+                        webEngine = webView.getEngine();
                     }
                 }
             });
             long endTime = System.nanoTime();
-            System.out.println("Execution time:" + ((endTime - startTime)/1000000) + " milliseconds");
+            System.out.println("Execution time:" + ((endTime - startTime) / 1000000) + " milliseconds");
         });
     }
 

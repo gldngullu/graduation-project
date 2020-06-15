@@ -19,7 +19,6 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeS
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.NoSuchElementException;
@@ -34,26 +33,13 @@ public class AnalyzeProject {
     private ArrayList<String> unsolvedMethods;
     private ArrayList<String> qualifiedClassNames;
 
-    public static void main(String[] args) throws Exception {
-        Locale.setDefault(Locale.forLanguageTag("en"));
-        //packagePath = "C:\\Users\\gldng\\IdeaProjects\\button\\src";
-        //packagePath = "C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java";
-        packagePath = "C:\\Users\\gldng\\Desktop\\Graduation Project\\javaparser-master\\javaparser-core\\src\\main\\java";
-        AnalyzeProject exClass = new AnalyzeProject();
-        exClass.initializeAnalyze();
-        exClass.findJavaFiles(packagePath);
-        exClass.findJarFilesInDirectory("C:\\Program Files\\Java");
-        exClass.findJarFilesInDirectory("C:\\Users\\gldng\\.m2\\repository");
-        exClass.findMethodCalls();
-    }
-
-    public void initializeAnalyze(){
+    public void initializeAnalyze() {
         parsedClasses = new ArrayList<>();
         jarFiles = new ArrayList<>();
         qualifiedClassNames = new ArrayList<>();
     }
 
-    public ArrayList<MethodCallInformation> findMethodCalls(){
+    public ArrayList<MethodCallInformation> findMethodCalls() {
 
         allMethodCallsInProject = new ArrayList<>();
         unsolvedMethods = new ArrayList<>();
@@ -72,7 +58,7 @@ public class AnalyzeProject {
     public void findJarFilesInDirectory(String path) {
         File directory = new File(path);
         File[] directoryFiles = directory.listFiles();
-        if(directoryFiles.length == 0)
+        if (directoryFiles.length == 0)
             return;
         for (File file : directory.listFiles()) {
             if (file.getName().endsWith(".jar"))
@@ -83,16 +69,15 @@ public class AnalyzeProject {
         }
     }
 
-    private void setTypeSolver(){
+    private void setTypeSolver() {
         CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
         combinedTypeSolver.add(new ReflectionTypeSolver());
-        //combinedTypeSolver.add(new JavaParserTypeSolver(new File("C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master\\src\\main\\java")));
         combinedTypeSolver.add(new JavaParserTypeSolver(packagePath));
         try {
             for (String path : jarFiles) {
                 combinedTypeSolver.add(new JarTypeSolver(path));
             }
-        } catch (Exception io){
+        } catch (Exception io) {
             System.out.println("Oops");
         }
         javaParserFacade = JavaParserFacade.get(combinedTypeSolver);
@@ -100,25 +85,24 @@ public class AnalyzeProject {
 
     public void findJavaFiles(String filePath) throws Exception {
         File directory = new File(filePath);
-            File[] allFilesInDirectory = directory.listFiles();
-            for (File file : allFilesInDirectory) {
-                if (file.getName().endsWith(".java")){
-                    CompilationUnit compilationUnit = StaticJavaParser.parse(file);
-                    parsedClasses.add(compilationUnit);
-                }
-                else if (file.isDirectory()) {
-                    findJavaFiles(file.getPath());
-                }
+        File[] allFilesInDirectory = directory.listFiles();
+        for (File file : allFilesInDirectory) {
+            if (file.getName().endsWith(".java")) {
+                CompilationUnit compilationUnit = StaticJavaParser.parse(file);
+                parsedClasses.add(compilationUnit);
+            } else if (file.isDirectory()) {
+                findJavaFiles(file.getPath());
             }
+        }
     }
 
-    private String getClassAsString(CompilationUnit compilationUnit){
+    private String getClassAsString(CompilationUnit compilationUnit) {
         String className = "";
         for (Node childNode : compilationUnit.getChildNodes()) {
-            if(childNode instanceof PackageDeclaration)
-                className += ((PackageDeclaration)childNode).getNameAsString() + ".";
-            if(childNode instanceof ClassOrInterfaceDeclaration)
-                className += ((ClassOrInterfaceDeclaration)childNode).getNameAsString();
+            if (childNode instanceof PackageDeclaration)
+                className += ((PackageDeclaration) childNode).getNameAsString() + ".";
+            if (childNode instanceof ClassOrInterfaceDeclaration)
+                className += ((ClassOrInterfaceDeclaration) childNode).getNameAsString();
         }
         return className;
     }
@@ -133,24 +117,24 @@ public class AnalyzeProject {
                 ResolvedMethodDeclaration resolvedMethod = javaParserFacade.solve(methodCallExpr).getCorrespondingDeclaration();
                 allMethodCallsInProject.add(
                         new MethodCallInformation(methodCallExpr, resolvedMethod, caller, methodCallExpr.getRange().get().begin.line));
-            }catch (UnsupportedOperationException ex){
+            } catch (UnsupportedOperationException ex) {
                 unsolvedMethods.add("Unsupported: " + methodCallExpr.toString());
-            }catch (UnsolvedSymbolException ex) {
+            } catch (UnsolvedSymbolException ex) {
                 unsolvedMethods.add("Unsolved: " + methodCallExpr.toString());
-            }catch (RuntimeException ex) {
+            } catch (RuntimeException ex) {
                 unsolvedMethods.add("Runtime: " + methodCallExpr.toString());
             }
         }
     }
 
-    private Node getCallerOfMethodCall(MethodCallExpr methodCall){
-        Node caller =  methodCall.getParentNode().get();
-        while(!((caller instanceof MethodDeclaration) || (caller instanceof ConstructorDeclaration))){
-            if(caller instanceof ClassOrInterfaceDeclaration || caller instanceof EnumDeclaration)
+    private Node getCallerOfMethodCall(MethodCallExpr methodCall) {
+        Node caller = methodCall.getParentNode().get();
+        while (!((caller instanceof MethodDeclaration) || (caller instanceof ConstructorDeclaration))) {
+            if (caller instanceof ClassOrInterfaceDeclaration || caller instanceof EnumDeclaration)
                 return caller;
             try {
                 caller = caller.getParentNode().get();
-            }catch (NoSuchElementException ex){
+            } catch (NoSuchElementException ex) {
                 ex.printStackTrace();
             }
         }
