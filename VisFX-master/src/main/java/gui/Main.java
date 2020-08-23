@@ -128,6 +128,7 @@ public class Main extends Application {
         sourceCodeTabs.setMinWidth(scene.getWidth() * (0.4));
         sourceCodeTabs.setMaxWidth(scene.getWidth() * (0.4));
         scene.getStylesheets().add("mainStylesheet.css");
+        primaryStage.setResizable(false);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Best java static call graph generator ever!");
         primaryStage.show();
@@ -135,6 +136,7 @@ public class Main extends Application {
 
     public void contactPopup(ActionEvent event) {
         Stage popup = new Stage();
+        popup.setResizable(false);
         popup.initModality(Modality.APPLICATION_MODAL);
         popup.setTitle("Contact");
         Label label = new Label(
@@ -157,6 +159,7 @@ public class Main extends Application {
 
     public void infoPopup(ActionEvent event) {
         Stage popup = new Stage();
+        popup.setResizable(false);
         popup.initModality(Modality.APPLICATION_MODAL);
         popup.setTitle("Information");
         TextArea text = new TextArea();
@@ -185,7 +188,7 @@ public class Main extends Application {
         try {
             DirectoryChooser fileChooser = new DirectoryChooser();
             fileChooser.setTitle("Select java project to analyze");
-            fileChooser.setInitialDirectory(new File("C:\\Users\\gldng\\IdeaProjects"));
+            fileChooser.setInitialDirectory(new File("C:\\Users\\gldng\\IdeaProjects\\Examples"));
             //fileChooser.setInitialDirectory(new File("C:\\Users\\gldng\\OneDrive\\Belgeler\\GitHub\\graduation-project\\VisFX-master"));
             projectFile = fileChooser.showDialog(((Button) event.getSource()).getScene().getWindow());
             determineSourcePackage();

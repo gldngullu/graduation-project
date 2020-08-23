@@ -128,14 +128,14 @@
             var element = nodes.get(nodeid);
             element.color = {
                 border: '#638edb',
-                background: '#c3d9ff'
+                background: '#000000'
             };
             nodes.update(element);
         });
         var connectedEdges = network.getConnectedEdges(properties.nodes[0]);
         connectedEdges.forEach( function(edgeid){
             var element = edges.get(edgeid);
-            element.color = '#638edb';
+            element.color = '#000000';
             edges.update(element);
         });
     });
